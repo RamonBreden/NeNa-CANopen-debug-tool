@@ -11,6 +11,8 @@ docks were created with the notion that the entire window (or any portion of it)
 would consist of dockable components.
 """
 
+from GUI_BOXES import *
+
 import sys
 from CAN_COM import *
 import numpy as np
@@ -79,86 +81,15 @@ area.addDock(d7, 'right')
 w2 = ConsoleWidget()
 d2.addWidget(w2)
 
-#Make the Connection manager window/box
-def ConnectWidget(): 
-    #call layoutmanager and make the window w3
-    w3 = pg.LayoutWidget()
-    #Make buttons and inputsfields widgets
-    bustype=QLineEdit()
-    channel=QLineEdit()
-    bitrate=QComboBox()
-    bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
-    bitrate.addItems(map(str, bitrate_list))
-    
-    Connect_button=QtWidgets.QPushButton("Connect")
-    #Make the light to communicate the state
-    Light=QtWidgets.QPushButton("")
-    Light.setStyleSheet("background-color : red")
-    
-    #add the widgets to the w3 window
-    w3.addWidget(QtWidgets.QLabel("""Bustype:"""), row = 0, col= 0)
-    w3.addWidget(bustype, row=0, col=1)
-    
-    w3.addWidget(QtWidgets.QLabel("""Channel:"""), row = 1, col= 0)
-    w3.addWidget(channel, row=1, col=1)
-    
-    w3.addWidget(QtWidgets.QLabel("""Bitrate:"""), row = 2, col= 0)
-    w3.addWidget(bitrate, row=2, col=1)
-    
-    w3.addWidget(Connect_button, row=3, col=1) 
-    w3.addWidget(Light, row= 3, col=0)
 
-    #define the action of the button
-    def connect(bitrate_list, bitrate):
-        #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
-        w2.write("connecting....\n", scrollToBottom='auto')
-        #run the Connect script
-        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
-        CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
-        
-        #When connected set light to green
-        Light.setStyleSheet("background-color : green")
-    Connect_button.clicked.connect(lambda: connect(bitrate_list, bitrate))
-    #send the finised window widget outside the function
-    return w3
 #generate the w3 widget and put it into the d3 box
-d3.addWidget(ConnectWidget())
+d3.addWidget(ConnectWidget(w2))
 
 #dezed moet nog geimporteerd worden van de CAN_COM class
 node_list= [40, 41, 10]
 
 #make the window to write date to the NeNa
-def WriteWidget(node_list):
-    w5 = pg.LayoutWidget()
-
-    #make a dropdown menu with combobox and convert all the node_list intergers to strings with map() function
-    Node=QComboBox()
-    Node.addItems(map(str, node_list))
-
-    Object=QLineEdit()
-    variable=QLineEdit()
-    Sub_index= QLineEdit()
-    UploadButton=QtWidgets.QPushButton("Upload")
-    UploadButton.resize(20, 10)
-
-    w5.addWidget(QtWidgets.QLabel("""Node:"""), row = 0, col= 0)
-    w5.addWidget(Node, row=0, col=1)
-    w5.addWidget(QtWidgets.QLabel("""Object:"""), row = 1, col= 0)
-    w5.addWidget(Object, row=1, col=1)
-    w5.addWidget(QtWidgets.QLabel("""Sub index:"""), row = 2, col= 0)
-    w5.addWidget(Sub_index, row=2, col=1)
-    w5.addWidget(QtWidgets.QLabel("""Variable:"""), row = 3, col= 0)
-    w5.addWidget(variable, row=3, col=1)
-    w5.addWidget(UploadButton, row=4, col=1)
-
-    def upload():
-        #send the folling things to the Connecting thing
-        print(Node.currentText(), Object.text(), variable.text(), Sub_index.text())
-        w2.write('uploaded\n' , scrollToBottom='auto')
-    UploadButton.clicked.connect(upload)
-
-    return w5 
-d5.addWidget(WriteWidget(node_list))
+d5.addWidget(WriteWidget(w2, node_list))
 
 #w4 = pg.LayoutWidget()
 #GenPLotButton=QtWidgets.QPushButton("Generate new plot")
@@ -166,9 +97,6 @@ d5.addWidget(WriteWidget(node_list))
 
 w4 = pg.GraphicsLayoutWidget(show=True)
 w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
-
-# 1) Simplest approach -- update data in the array such that plot appears to scroll
-#    In these examples, the array size is fixed.
 p2 = w4.addPlot()
 data1 = np.random.normal(size=300)
 data2 = np.random.normal(size=300)
@@ -221,21 +149,8 @@ d4.addWidget(w4)
 
 #make the list of nodes on the canbus, with dropdown list of the objects
 #w6 =pg.mkQApp()
-w6 = pg.TreeWidget()
-node_list = [40, 41]
-ObjectlistNode1= [6060, 6061, 6062]
 
-for i in range(len(node_list)):
-    
-    Name = "Node " + str(node_list[i])
-    item  = QtWidgets.QTreeWidgetItem([Name]) # make toplevel ITEM
-    w6.addTopLevelItem(item)
-
-    for j in range(len(ObjectlistNode1)):               #for every object in the list
-        object= QtWidgets.QTreeWidgetItem([str(ObjectlistNode1[j])]) # add a Child to the Node with the name of the Node
-        item.addChild(object)
-
-d6.addWidget(w6)
+d6.addWidget(NodeTree())
 
 
 
