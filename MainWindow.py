@@ -14,7 +14,6 @@ would consist of dockable components.
 import sys
 import CAN_COM
 import numpy as np
-#import Exampleplot
 import qdarktheme
 import numpy as np
 import pyqtgraph as pg
@@ -47,8 +46,6 @@ win.setWindowTitle('NeNa CANopen debugger')
 
 menu= QMenuBar()
 
-
-
 ## Create docks, place them into the window one at a time.
 ## Note that size arguments are only a suggestion; docks will still have to
 ## fill the entire dock area and obey the limits of their internal widgets.
@@ -71,7 +68,6 @@ area.addDock(d7, 'right')
 ## Test ability to move docks programatically after they have been placed
 #area.moveDock(d4, 'top', d2)     ## move d4 to top edge of d2  ## move d6 to stack on top of d4
 #area.moveDock(d5, 'top', d2)     ## move d5 to top edge of d2
-
 
 ## Add widgets into each dock
 
@@ -163,7 +159,6 @@ def WriteWidget(node_list):
     return w5 
 d5.addWidget(WriteWidget(node_list))
 
-
 #w4 = pg.LayoutWidget()
 #GenPLotButton=QtWidgets.QPushButton("Generate new plot")
 #w4.addWidget(GenPLotButton, row=0, col=0)
@@ -213,7 +208,6 @@ def update1():
         fps = fps * (1 - s) + (1.0 / dt) * s
     p2.setTitle("%0.2f fps" % fps)
 
-
 # update all plots
 def update():
     update1()
@@ -235,7 +229,6 @@ for i in range(len(node_list)):
     Name = "Node " + str(node_list[i])
     item  = QtWidgets.QTreeWidgetItem([Name]) # make toplevel ITEM
     w6.addTopLevelItem(item)
-
 
     for j in range(len(ObjectlistNode1)):               #for every object in the list
         object= QtWidgets.QTreeWidgetItem([str(ObjectlistNode1[j])]) # add a Child to the Node with the name of the Node
