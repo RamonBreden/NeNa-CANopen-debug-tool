@@ -12,7 +12,7 @@ would consist of dockable components.
 """
 
 import sys
-import CAN_COM
+from CAN_COM import *
 import numpy as np
 import qdarktheme
 import numpy as np
@@ -87,7 +87,7 @@ def ConnectWidget():
     bustype=QLineEdit()
     channel=QLineEdit()
     bitrate=QComboBox()
-    bitrate_list = [1000, 800, 500, 250, 125, 50, 20, 10]
+    bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
     bitrate.addItems(map(str, bitrate_list))
     
     Connect_button=QtWidgets.QPushButton("Connect")
@@ -109,15 +109,16 @@ def ConnectWidget():
     w3.addWidget(Light, row= 3, col=0)
 
     #define the action of the button
-    def connect(bitrate_list):
-        
+    def connect(bitrate_list, bitrate):
+        #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
         w2.write("connecting....\n", scrollToBottom='auto')
-        #run the Connect script
-        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
+        #print (bitrate_list[bitrate.currentIndex()])#run the Connect script
+        #w2.write(str(bitrate_list[bitrate.currentIndex()]))    
+        CAN_COM(bustype.text(), channel.text(), bitrate_list[bitrate.currentIndex()] )
         
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
-    Connect_button.clicked.connect(lambda: connect(bitrate_list))
+    Connect_button.clicked.connect(lambda: connect(bitrate_list, bitrate))
     #send the finised window widget outside the function
     return w3
 #generate the w3 widget and put it into the d3 box
@@ -238,7 +239,6 @@ d6.addWidget(w6)
 
 
 
-pg.setConfigOptions(antialias=True)
 
 
 # Dedicated colors which look "good"
@@ -261,10 +261,12 @@ params = pg.parametertree.Parameter.create(name='Parameters', type='group', chil
 pt = pg.parametertree.ParameterTree(showHeader=False)
 pt.setParameters(params)
 
+d1.addWidget(pt)
 
+
+
+pg.setConfigOptions(antialias=True)
 pw2 = pg.PlotWidget()
-
-
 # Add some noise on the curves
 noise  = 0.1
 noises: list = np.random.rand(6, 100)*noise
@@ -329,7 +331,7 @@ params.sigTreeStateChanged.connect(update_plot)
 update_plot()
 
 d7.addWidget(pw2)
-d1.addWidget(pt)
+
 win.show()
 
 if __name__ == '__main__':
