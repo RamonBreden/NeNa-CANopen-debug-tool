@@ -58,7 +58,7 @@ d3 = Dock("Connection window", size=(500,400), hideTitle=False)
 d4 = Dock("Plotgenerator", size=(500,200), hideTitle=False)
 d5 = Dock("Write to Objects", size=(500,200), hideTitle=False)
 d6 = Dock("Object List", size=(500,200), hideTitle=False)
-#d7 = Dock("plot", size=(500,200), hideTitle=False)
+d7 = Dock("plot", size=(500,200), hideTitle=False)
 
 area.addDock(d1, 'left')      ## place d1 at left edge of dock area (it will fill the whole space since there are no other docks yet)
 area.addDock(d2, 'bottom', d1)     
@@ -66,7 +66,7 @@ area.addDock(d3, 'right')## place d3 at bottom edge of d1
 area.addDock(d4, 'bottom', d3)     ## place d4 at right edge of dock area
 area.addDock(d5, 'bottom', d4)  ## place d5 at left edge of d1
 area.addDock(d6, 'right', d3)   ## place d5 at top edge of d4
-#area.addDock(d7, 'right')
+area.addDock(d7, 'right')
 
 ## Test ability to move docks programatically after they have been placed
 #area.moveDock(d4, 'top', d2)     ## move d4 to top edge of d2  ## move d6 to stack on top of d4
@@ -270,10 +270,7 @@ pt.setParameters(params)
 
 
 pw2 = pg.PlotWidget()
-splitter = QtWidgets.QSplitter()
-splitter.addWidget(pt)
-splitter.addWidget(pw2)
-splitter.show()
+
 
 # Add some noise on the curves
 noise  = 0.1
@@ -337,6 +334,7 @@ def update_plot():
 
 params.sigTreeStateChanged.connect(update_plot)
 update_plot()
+
 d7.addWidget(pw2)
 d1.addWidget(pt)
 win.show()
