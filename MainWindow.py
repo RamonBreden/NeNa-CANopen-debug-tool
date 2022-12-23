@@ -118,7 +118,7 @@ def ConnectWidget():
     bustype=QLineEdit()
     channel=QLineEdit()
     bitrate=QComboBox()
-    bitrate_list = [125000, 250000]
+    bitrate_list = [1000, 800, 500, 250, 125, 50, 20, 10]
     bitrate.addItems(map(str, bitrate_list))
 
     Connect_button=QtWidgets.QPushButton("Connect")
@@ -143,7 +143,7 @@ def ConnectWidget():
     def connect():
         w2.write("connecting....\n", scrollToBottom='auto')
         #run the Connect script
-        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate.text())
+        CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
         
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
