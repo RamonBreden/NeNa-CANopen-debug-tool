@@ -74,26 +74,23 @@ area.addDock(d7, 'right')
 
 ## first dock gets save/restore buttons
 
-
-
+#dezed moet nog geimporteerd worden van de CAN_COM class
+node_list= [40, 41, 10]
 
 w2 = ConsoleWidget()
 d2.addWidget(w2)
 
-
 #generate the w3 widget and put it into the d3 box
 d3.addWidget(ConnectWidget(w2))
-
-#dezed moet nog geimporteerd worden van de CAN_COM class
-node_list= [40, 41, 10]
 
 #make the window to write date to the NeNa
 d5.addWidget(WriteWidget(w2, node_list))
 
-#w4 = pg.LayoutWidget()
-#GenPLotButton=QtWidgets.QPushButton("Generate new plot")
-#w4.addWidget(GenPLotButton, row=0, col=0)
+#make the list of nodes on the canbus, with dropdown list of the objects
+d6.addWidget(NodeTree())
 
+
+#Scroll Plot
 w4 = pg.GraphicsLayoutWidget(show=True)
 w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
 p2 = w4.addPlot()
@@ -146,19 +143,7 @@ timer.start(15)
 d4.addWidget(w4)
 
 
-#make the list of nodes on the canbus, with dropdown list of the objects
-#w6 =pg.mkQApp()
-
-d6.addWidget(NodeTree())
-
-
-
-
-
-# Dedicated colors which look "good"
-colors = ['#08F7FE', '#FE53BB', '#F5D300', '#00ff41', '#FF0000', '#9467bd', ]
-
-# We create the ParameterTree
+# create the ParameterTree
 children = [
     dict(name='make_line_glow', type='bool', value=False),
     dict(name='add_underglow', type='list', limits=['None', 'Full', 'Gradient'], value='None'),
@@ -170,21 +155,21 @@ children = [
     dict(name='linewidth_start', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='linewidth_stop', type='float', limits=[0.2, 50], value=8, step=0.1),
 ]
-
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
 pt = pg.parametertree.ParameterTree(showHeader=False)
 pt.setParameters(params)
-
 d1.addWidget(pt)
 
 
-
+#Controlled Plot
 pg.setConfigOptions(antialias=True)
 pw2 = pg.PlotWidget()
 # Add some noise on the curves
 noise  = 0.1
 noises: list = np.random.rand(6, 100)*noise
+# Dedicated colors which look "good"
 
+colors = ['#08F7FE', '#FE53BB', '#F5D300', '#00ff41', '#FF0000', '#9467bd', ]
 def update_plot():
     
     pw2.clear()
@@ -243,8 +228,12 @@ def update_plot():
 
 params.sigTreeStateChanged.connect(update_plot)
 update_plot()
-
 d7.addWidget(pw2)
+
+
+
+
+
 
 win.show()
 
