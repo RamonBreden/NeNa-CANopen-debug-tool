@@ -12,7 +12,7 @@ would consist of dockable components.
 """
 
 import sys
-import CAN_COM
+from CAN_COM import *
 import numpy as np
 import qdarktheme
 import numpy as np
@@ -114,7 +114,8 @@ def ConnectWidget():
         w2.write("connecting....\n", scrollToBottom='auto')
         #run the Connect script
         #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
-        CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
+        #CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
+        CAN_COM('pcan', 'PCAN_USBBUS1', 250000)
         
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
