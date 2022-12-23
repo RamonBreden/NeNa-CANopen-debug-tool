@@ -222,8 +222,8 @@ d4.addWidget(w4)
 #make the list of nodes on the canbus, with dropdown list of the objects
 #w6 =pg.mkQApp()
 w6 = pg.TreeWidget()
-node_list = [41, 42, 10]
-ObjectlistNode1= [46546, 6454, 4]
+node_list = [40, 41]
+ObjectlistNode1= [6060, 6061, 6062]
 
 for i in range(len(node_list)):
     
