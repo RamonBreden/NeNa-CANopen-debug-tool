@@ -112,9 +112,9 @@ def ConnectWidget():
     def connect(bitrate_list, bitrate):
         #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
         w2.write("connecting....\n", scrollToBottom='auto')
-        #print (bitrate_list[bitrate.currentIndex()])#run the Connect script
-        #w2.write(str(bitrate_list[bitrate.currentIndex()]))    
-        CAN_COM(bustype.text(), channel.text(), bitrate_list[bitrate.currentIndex()] )
+        #run the Connect script
+        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
+        CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
         
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
@@ -222,8 +222,8 @@ d4.addWidget(w4)
 #make the list of nodes on the canbus, with dropdown list of the objects
 #w6 =pg.mkQApp()
 w6 = pg.TreeWidget()
-node_list = [41, 42, 10]
-ObjectlistNode1= [46546, 6454, 4]
+node_list = [40, 41]
+ObjectlistNode1= [6060, 6061, 6062]
 
 for i in range(len(node_list)):
     
