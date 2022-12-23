@@ -1,6 +1,5 @@
 """
 This example demonstrates the use of pyqtgraph's dock widget system.
-
 The dockarea system allows the design of user interfaces which can be rearranged by
 the user at runtime. Docks can be moved, resized, stacked, and torn out of the main
 window. This is similar in principle to the docking system built into Qt, but 
