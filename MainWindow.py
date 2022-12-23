@@ -13,11 +13,13 @@ would consist of dockable components.
 
 import sys
 import CAN_COM
-import Exampleplot
+import numpy as np
+#import Exampleplot
 import qdarktheme
 import numpy as np
 import pyqtgraph as pg
 
+from time import perf_counter
 from pyqtgraph.console import ConsoleWidget
 from pyqtgraph.dockarea.Dock import Dock
 from pyqtgraph.dockarea.DockArea import DockArea
@@ -145,7 +147,7 @@ def ConnectWidget():
         
         w2.write("connecting....\n", scrollToBottom='auto')
         #run the Connect script
-        CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
+        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
         
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
@@ -198,10 +200,9 @@ w4.addWidget(GenPLotButton, row=0, col=0)
 
 def gen_plotter():
    #proberen een nieuw box met een plot te generen
-    #win= pg.PlotWidget(title="Dock 6 plot")
-    #win.plot(np.random.normal(size=100))
-    plot = Exampleplot.examplescrollplot()
-    d7.addWidget(plot)
+    win= pg.PlotWidget(title="Dock 6 plot")
+    win.plot(np.random.normal(size=100))
+    d7.addWidget(win)
     w2.write('new plot (NOT YET WORKING) kun jij die doen Ramon\n' , scrollToBottom='auto')
     
    #PlotterWindow.Upload_Window()
