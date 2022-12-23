@@ -104,11 +104,11 @@ class CAN_COM():
         return conv_int
 
 # TEST OF FUNCTIONS - REMOVE FOR FINAL APPLICATION
-p = CAN_COM('pcan', 'PCAN_USBBUS1', 250000)
-print(p.scan_bus())
-p.upload(41, 0x320E, 6, 800)
+#p = CAN_COM('pcan', 'PCAN_USBBUS1', 250000)
+#print(p.scan_bus())
+#p.upload(41, 0x320E, 6, 800)
 
-time.sleep(1)
+#time.sleep(1)
 
-print(p.download(41, 0x320E, 6))
-p.end_program()
+#print(p.download(41, 0x320E, 6))
+#p.end_program()

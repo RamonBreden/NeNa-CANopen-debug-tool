@@ -12,6 +12,7 @@ would consist of dockable components.
 """
 
 import sys
+import CAN_COM
 import qdarktheme
 import numpy as np
 import pyqtgraph as pg
@@ -29,7 +30,8 @@ from PyQt6.QtWidgets import (
     QMenuBar,
     QToolBar,
     QMessageBox,
-    QApplication
+    QApplication,
+    QSpinBox
 )
 
 app = QApplication(sys.argv)
@@ -112,7 +114,10 @@ def ConnectWidget():
     #Make buttons and inputsfields widgets
     bustype=QLineEdit()
     channel=QLineEdit()
-    bitrate=QLineEdit()
+    bitrate=QComboBox()
+    bitrate_list = [125000, 250000]
+    bitrate.addItems(map(str, bitrate_list))
+
     Connect_button=QtWidgets.QPushButton("Connect")
     #Make the light to communicate the state
     Light=QtWidgets.QPushButton("")
@@ -135,7 +140,7 @@ def ConnectWidget():
     def connect():
         w2.write("connecting....\n", scrollToBottom='auto')
         #run the Connect script
-        #CAN_COM.connect(bustype.text(), channel.text(), bitrate.text())
+        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate.text())
         
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
