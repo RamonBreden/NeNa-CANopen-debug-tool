@@ -40,6 +40,9 @@ win.setCentralWidget(area)
 win.resize(750,500)
 win.setWindowTitle('NeNa CANopen debugger')
 
+menu= QMenuBar()
+
+
 
 ## Create docks, place them into the window one at a time.
 ## Note that size arguments are only a suggestion; docks will still have to
