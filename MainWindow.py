@@ -120,7 +120,7 @@ def ConnectWidget():
     bitrate=QComboBox()
     bitrate_list = [1000, 800, 500, 250, 125, 50, 20, 10]
     bitrate.addItems(map(str, bitrate_list))
-
+    
     Connect_button=QtWidgets.QPushButton("Connect")
     #Make the light to communicate the state
     Light=QtWidgets.QPushButton("")
@@ -140,14 +140,15 @@ def ConnectWidget():
     w3.addWidget(Light, row= 3, col=0)
 
     #define the action of the button
-    def connect():
+    def connect(bitrate_list):
+        
         w2.write("connecting....\n", scrollToBottom='auto')
         #run the Connect script
         CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
         
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
-    Connect_button.clicked.connect(connect)
+    Connect_button.clicked.connect(lambda: connect(bitrate_list))
     #send the finised window widget outside the function
     return w3
 #generate the w3 widget and put it into the d3 box
