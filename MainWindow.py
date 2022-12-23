@@ -42,7 +42,7 @@ qdarktheme.setup_theme() # Dark mode
 win = QtWidgets.QMainWindow()
 area = DockArea()
 win.setCentralWidget(area)
-win.resize(750,500)
+win.resize(1000,750)
 win.setWindowTitle('NeNa CANopen debugger')
 
 menu= QMenuBar()
@@ -52,13 +52,13 @@ menu= QMenuBar()
 ## Create docks, place them into the window one at a time.
 ## Note that size arguments are only a suggestion; docks will still have to
 ## fill the entire dock area and obey the limits of their internal widgets.
-d1 = Dock("Menu", size=(1, 1), hideTitle=True)     ## give this dock the minimum possible size
-d2 = Dock("Console", size=(500,300), closable=True, hideTitle=True)
-d3 = Dock("Connection window", size=(500,400), hideTitle=True)
-d4 = Dock("Plotgenerator", size=(500,200), hideTitle=True)
-d5 = Dock("Write to Objects", size=(500,200), hideTitle=True)
-d6 = Dock("Object List", size=(500,200), hideTitle=True)
-d7 = Dock("plot", size=(500,200), hideTitle=False)
+d1 = Dock("Menu", size=(1, 1), hideTitle=False)     ## give this dock the minimum possible size
+d2 = Dock("Console", size=(500,300), closable=True, hideTitle=False)
+d3 = Dock("Connection window", size=(500,400), hideTitle=False)
+d4 = Dock("Plotgenerator", size=(500,200), hideTitle=False)
+d5 = Dock("Write to Objects", size=(500,200), hideTitle=False)
+d6 = Dock("Object List", size=(500,200), hideTitle=False)
+#d7 = Dock("plot", size=(500,200), hideTitle=False)
 
 area.addDock(d1, 'left')      ## place d1 at left edge of dock area (it will fill the whole space since there are no other docks yet)
 area.addDock(d2, 'bottom', d1)     
@@ -66,7 +66,7 @@ area.addDock(d3, 'right')## place d3 at bottom edge of d1
 area.addDock(d4, 'bottom', d3)     ## place d4 at right edge of dock area
 area.addDock(d5, 'bottom', d4)  ## place d5 at left edge of d1
 area.addDock(d6, 'right', d3)   ## place d5 at top edge of d4
-area.addDock(d7, 'right')
+#area.addDock(d7, 'right')
 
 ## Test ability to move docks programatically after they have been placed
 #area.moveDock(d4, 'top', d2)     ## move d4 to top edge of d2  ## move d6 to stack on top of d4
@@ -74,41 +74,6 @@ area.addDock(d7, 'right')
 
 
 ## Add widgets into each dock
-
-## first dock gets save/restore buttons
-def SaveWidget():
-    w1 = pg.LayoutWidget()
-    label = QtWidgets.QLabel(""" -- DockArea Example -- 
-    This window has 6 Dock widgets in it. Each dock can be dragged
-    by its title bar to occupy a different space within the window 
-    but note that one dock has its title bar hidden). Additionally,
-    the borders between docks may be dragged to resize. Docks that are dragged on top
-    of one another are stacked in a tabbed layout. Double-click a dock title
-    bar to place it in its own window.
-    """)
-    saveBtn = QtWidgets.QPushButton('Save dock state')
-    restoreBtn = QtWidgets.QPushButton('Restore dock state')
-    
-    restoreBtn.setEnabled(False)
-
-    w1.addWidget(label, row=0, col=0)
-    w1.addWidget(saveBtn, row=1, col=0)
-    w1.addWidget(restoreBtn, row=2, col=0)
-
-    state = None
-    def save():
-        global state
-        state = area.saveState()
-        restoreBtn.setEnabled(True)
-    saveBtn.clicked.connect(save)
-
-    def load():
-        global state
-        area.restoreState(state)
-    restoreBtn.clicked.connect(load)
-    return w1
-d1.addWidget(SaveWidget())
-
 
 w2 = ConsoleWidget()
 d2.addWidget(w2)
@@ -251,18 +216,6 @@ timer = pg.QtCore.QTimer()
 timer.timeout.connect(update)
 timer.start(15)
 
-
-
-
-def gen_plotter():
-   #proberen een nieuw box met een plot te generen
-    win= pg.PlotWidget(title="Dock 6 plot")
-    win.plot(np.random.normal(size=100))
-    d7.addWidget(win)
-    w2.write('new plot (NOT YET WORKING) kun jij die doen Ramon\n' , scrollToBottom='auto')
-    
-   #PlotterWindow.Upload_Window()
-#GenPLotButton.clicked.connect(gen_plotter)
 d4.addWidget(w4)
 
 #make the list of nodes on the canbus, with dropdown list of the objects
