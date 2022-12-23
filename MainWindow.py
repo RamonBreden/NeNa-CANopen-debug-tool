@@ -13,6 +13,7 @@ would consist of dockable components.
 
 import sys
 import CAN_COM
+import Exampleplot
 import qdarktheme
 import numpy as np
 import pyqtgraph as pg
@@ -197,9 +198,10 @@ w4.addWidget(GenPLotButton, row=0, col=0)
 
 def gen_plotter():
    #proberen een nieuw box met een plot te generen
-    win= pg.PlotWidget(title="Dock 6 plot")
-    win.plot(np.random.normal(size=100))
-    d7.addWidget(win)
+    #win= pg.PlotWidget(title="Dock 6 plot")
+    #win.plot(np.random.normal(size=100))
+    plot = Exampleplot.examplescrollplot()
+    d7.addWidget(plot)
     w2.write('new plot (NOT YET WORKING) kun jij die doen Ramon\n' , scrollToBottom='auto')
     
    #PlotterWindow.Upload_Window()
