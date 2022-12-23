@@ -114,6 +114,7 @@ def ConnectWidget():
         w2.write("connecting....\n", scrollToBottom='auto')
         #run the Connect script
         #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
+        CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
         
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
