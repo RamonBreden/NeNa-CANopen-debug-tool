@@ -194,9 +194,65 @@ def WriteWidget(node_list):
 d5.addWidget(WriteWidget(node_list))
 
 
-w4 = pg.LayoutWidget()
-GenPLotButton=QtWidgets.QPushButton("Generate new plot")
-w4.addWidget(GenPLotButton, row=0, col=0)
+#w4 = pg.LayoutWidget()
+#GenPLotButton=QtWidgets.QPushButton("Generate new plot")
+#w4.addWidget(GenPLotButton, row=0, col=0)
+
+w4 = pg.GraphicsLayoutWidget(show=True)
+w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
+
+# 1) Simplest approach -- update data in the array such that plot appears to scroll
+#    In these examples, the array size is fixed.
+p2 = w4.addPlot()
+data1 = np.random.normal(size=300)
+data2 = np.random.normal(size=300)
+curve1 = p2.plot(data1, pen={'color':(0, 156, 129), 'width':3})
+curve2 = p2.plot(data2, pen={'color':'w', 'width':3})
+pg.setConfigOptions(antialias=True)
+
+ptr1 = 0
+lastTime = perf_counter()
+fps = None
+
+def update1():
+    global data1, data2, ptr1, fps, lastTime
+
+    data1[:-1] = data1[1:]  # shift data in the array one sample left
+                            # (see also: np.roll)
+    data1[-1] = np.random.normal()
+
+    data2[:-1] = data2[1:]  # shift data in the array one sample left
+                            # (see also: np.roll)
+    data2[-1] = np.random.normal()
+    
+    ptr1 += 1
+    curve1.setData(data1)
+    curve1.setPos(ptr1, 0)
+
+    curve2.setData(data2)
+    curve2.setPos(ptr1, 0)
+
+    now = perf_counter()
+    dt = now - lastTime
+    lastTime = now
+    
+    if fps is None:
+        fps = 1.0 / dt
+    else:
+        s = np.clip(dt * 3.0, 0, 1)
+        fps = fps * (1 - s) + (1.0 / dt) * s
+    p2.setTitle("%0.2f fps" % fps)
+
+
+# update all plots
+def update():
+    update1()
+timer = pg.QtCore.QTimer()
+timer.timeout.connect(update)
+timer.start(15)
+
+
+
 
 def gen_plotter():
    #proberen een nieuw box met een plot te generen
@@ -206,7 +262,7 @@ def gen_plotter():
     w2.write('new plot (NOT YET WORKING) kun jij die doen Ramon\n' , scrollToBottom='auto')
     
    #PlotterWindow.Upload_Window()
-GenPLotButton.clicked.connect(gen_plotter)
+#GenPLotButton.clicked.connect(gen_plotter)
 d4.addWidget(w4)
 
 #make the list of nodes on the canbus, with dropdown list of the objects
