@@ -50,21 +50,21 @@ menu= QMenuBar()
 ## Create docks, place them into the window one at a time.
 ## Note that size arguments are only a suggestion; docks will still have to
 ## fill the entire dock area and obey the limits of their internal widgets.
-d1 = Dock("Menu", size=(1, 1), hideTitle=False)     ## give this dock the minimum possible size
-d2 = Dock("Console", size=(500,300), closable=True, hideTitle=False)
-d3 = Dock("Connection window", size=(500,400), hideTitle=False)
-d4 = Dock("Plotgenerator", size=(500,200), hideTitle=False)
-d5 = Dock("Write to Objects", size=(500,200), hideTitle=False)
-d6 = Dock("Object List", size=(500,200), hideTitle=False)
-d7 = Dock("plot", size=(500,200), hideTitle=False)
+d1 = Dock("Plot parameters", size=(700, 200), hideTitle=False)     ## give this dock the minimum possible size
+d2 = Dock("Console", size=(300,300), closable=True, hideTitle=False)
+d3 = Dock("Connection window", size=(1,200), hideTitle=False)
+d4 = Dock("Plotgenerator", size=(1,200), hideTitle=False)
+d5 = Dock("Write to Objects", size=(1,200), hideTitle=False)
+d6 = Dock("Object List", size=(1,200), hideTitle=False)
+d7 = Dock("plot", size=(1,1), hideTitle=False)
 
-area.addDock(d1, 'left')      ## place d1 at left edge of dock area (it will fill the whole space since there are no other docks yet)
-area.addDock(d2, 'bottom', d1)     
-area.addDock(d3, 'right')## place d3 at bottom edge of d1
-area.addDock(d4, 'bottom', d3)     ## place d4 at right edge of dock area
-area.addDock(d5, 'bottom', d4)  ## place d5 at left edge of d1
-area.addDock(d6, 'right', d3)   ## place d5 at top edge of d4
-area.addDock(d7, 'right')
+area.addDock(d1, 'right')     
+area.addDock(d2, 'left')     
+area.addDock(d3, 'bottom', d2)
+area.addDock(d4, 'bottom', d1)     
+area.addDock(d5, 'bottom', d3)  
+area.addDock(d6, 'bottom', d5)  
+area.addDock(d7, 'bottom', d4)
 
 ## Test ability to move docks programatically after they have been placed
 #area.moveDock(d4, 'top', d2)     ## move d4 to top edge of d2  ## move d6 to stack on top of d4
@@ -91,6 +91,23 @@ d5.addWidget(WriteWidget(w2, node_list))
 #make the list of nodes on the canbus, with dropdown list of the objects
 d6.addWidget(NodeTree())
 
+#----------------------------------------------------------------------------------------------------
+# create the ParameterTree
+children = [
+    dict(name='make_line_glow', type='bool', value=False),
+    dict(name='add_underglow', type='list', limits=['None', 'Full', 'Gradient'], value='None'),
+    dict(name='nb_lines', type='int', limits=[1, 6], value=1),
+    dict(name='nb glow lines', type='int', limits=[0, 15], value=10),
+    dict(name='alpha_start', type='int', limits=[0, 255], value=25, step=1),
+    dict(name='alpha_stop', type='int', limits=[0, 255], value=25, step=1),
+    dict(name='alpha_underglow', type='int', limits=[0, 255], value=25, step=1),
+    dict(name='linewidth_start', type='float', limits=[0.1, 50], value=1, step=0.1),
+    dict(name='linewidth_stop', type='float', limits=[0.2, 50], value=8, step=0.1),
+]
+params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
+pt = pg.parametertree.ParameterTree(showHeader=False)
+pt.setParameters(params)
+d1.addWidget(pt)
 
 #Scroll Plot ------------------------------------------------------------------------------------------------
 w4 = pg.GraphicsLayoutWidget(show=True)
@@ -108,6 +125,8 @@ fps = None
 
 def update1():
     global data1, data2, ptr1, fps, lastTime
+
+    nb_glow_lines   = params.child('nb glow lines').value()
 
     data1[:-1] = data1[1:]  # shift data in the array one sample left
                             # (see also: np.roll)
@@ -142,23 +161,8 @@ timer.start(15)
 
 d4.addWidget(w4)
 
-#----------------------------------------------------------------------------------------------------
-# create the ParameterTree
-children = [
-    dict(name='make_line_glow', type='bool', value=False),
-    dict(name='add_underglow', type='list', limits=['None', 'Full', 'Gradient'], value='None'),
-    dict(name='nb_lines', type='int', limits=[1, 6], value=1),
-    dict(name='nb glow lines', type='int', limits=[0, 15], value=10),
-    dict(name='alpha_start', type='int', limits=[0, 255], value=25, step=1),
-    dict(name='alpha_stop', type='int', limits=[0, 255], value=25, step=1),
-    dict(name='alpha_underglow', type='int', limits=[0, 255], value=25, step=1),
-    dict(name='linewidth_start', type='float', limits=[0.1, 50], value=1, step=0.1),
-    dict(name='linewidth_stop', type='float', limits=[0.2, 50], value=8, step=0.1),
-]
-params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
-pt = pg.parametertree.ParameterTree(showHeader=False)
-pt.setParameters(params)
-d1.addWidget(pt)
+
+
 
 #---------------------------------------------------------------------------------------------------
 #Controlled Plot
