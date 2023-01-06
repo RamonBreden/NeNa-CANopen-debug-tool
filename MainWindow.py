@@ -74,14 +74,16 @@ area.addDock(d7, 'right')
 
 ## first dock gets save/restore buttons
 
-#dezed moet nog geimporteerd worden van de CAN_COM class
-node_list= [40, 41, 10]
 
 w2 = ConsoleWidget()
 d2.addWidget(w2)
 
 #generate the w3 widget and put it into the d3 box
 d3.addWidget(ConnectWidget(w2))
+
+
+#!!!!!!!!!!!!!!!!!!!dezed moet nog geimporteerd worden van de CAN_COM class
+node_list= [40, 41, 10]
 
 #make the window to write date to the NeNa
 d5.addWidget(WriteWidget(w2, node_list))
@@ -90,7 +92,7 @@ d5.addWidget(WriteWidget(w2, node_list))
 d6.addWidget(NodeTree())
 
 
-#Scroll Plot
+#Scroll Plot ------------------------------------------------------------------------------------------------
 w4 = pg.GraphicsLayoutWidget(show=True)
 w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
 p2 = w4.addPlot()
@@ -134,15 +136,13 @@ def update1():
     p2.setTitle("%0.2f fps" % fps)
 
 # update all plots
-def update():
-    update1()
 timer = pg.QtCore.QTimer()
-timer.timeout.connect(update)
+timer.timeout.connect(update1)
 timer.start(15)
 
 d4.addWidget(w4)
 
-
+#----------------------------------------------------------------------------------------------------
 # create the ParameterTree
 children = [
     dict(name='make_line_glow', type='bool', value=False),
@@ -160,7 +160,7 @@ pt = pg.parametertree.ParameterTree(showHeader=False)
 pt.setParameters(params)
 d1.addWidget(pt)
 
-
+#---------------------------------------------------------------------------------------------------
 #Controlled Plot
 pg.setConfigOptions(antialias=True)
 pw2 = pg.PlotWidget()
@@ -185,6 +185,7 @@ def update_plot():
     xs = []
     ys = []
     for i in range(nb_lines):
+
         xs.append(np.linspace(0, 2*np.pi, 100)-i)
         ys.append(np.sin(xs[-1])*xs[-1]-i/3+noises[i])
 
