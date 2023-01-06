@@ -24,6 +24,8 @@ from pyqtgraph.console import ConsoleWidget
 from pyqtgraph.dockarea.Dock import Dock
 from pyqtgraph.dockarea.DockArea import DockArea
 from pyqtgraph.Qt import QtWidgets
+
+
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import (
     QLineEdit,
@@ -50,13 +52,13 @@ menu= QMenuBar()
 ## Create docks, place them into the window one at a time.
 ## Note that size arguments are only a suggestion; docks will still have to
 ## fill the entire dock area and obey the limits of their internal widgets.
-d1 = Dock("Plot parameters", size=(700, 200), hideTitle=False)     ## give this dock the minimum possible size
-d2 = Dock("Console", size=(300,300), closable=True, hideTitle=False)
-d3 = Dock("Connection window", size=(1,200), hideTitle=False)
-d4 = Dock("Plotgenerator", size=(1,200), hideTitle=False)
+d1 = Dock("Plot parameters", size=(700, ), hideTitle=True)     ## give this dock the minimum possible size
+d2 = Dock("Console", size=(300,300), closable=True, hideTitle=True)
+d3 = Dock("CAN BUS Connection", size=(1,200), hideTitle=False)
+d4 = Dock("Plotgenerator", size=(1,200), hideTitle=True)
 d5 = Dock("Write to Objects", size=(1,200), hideTitle=False)
 d6 = Dock("Object List", size=(1,200), hideTitle=False)
-d7 = Dock("plot", size=(1,1), hideTitle=False)
+#d7 = Dock("plot", size=(1,1),closable=True, hideTitle=False)
 
 area.addDock(d1, 'right')     
 area.addDock(d2, 'left')     
@@ -64,7 +66,7 @@ area.addDock(d3, 'bottom', d2)
 area.addDock(d4, 'bottom', d1)     
 area.addDock(d5, 'bottom', d3)  
 area.addDock(d6, 'bottom', d5)  
-area.addDock(d7, 'bottom', d4)
+#area.addDock(d7, 'bottom', d4)
 
 ## Test ability to move docks programatically after they have been placed
 #area.moveDock(d4, 'top', d2)     ## move d4 to top edge of d2  ## move d6 to stack on top of d4
@@ -93,16 +95,14 @@ d6.addWidget(NodeTree())
 
 #----------------------------------------------------------------------------------------------------
 # create the ParameterTree
+readable_objects= [0x12315, 0x4546, 'random' ]
+
 children = [
-    dict(name='make_line_glow', type='bool', value=False),
-    dict(name='add_underglow', type='list', limits=['None', 'Full', 'Gradient'], value='None'),
-    dict(name='nb_lines', type='int', limits=[1, 6], value=1),
-    dict(name='nb glow lines', type='int', limits=[0, 15], value=10),
-    dict(name='alpha_start', type='int', limits=[0, 255], value=25, step=1),
-    dict(name='alpha_stop', type='int', limits=[0, 255], value=25, step=1),
-    dict(name='alpha_underglow', type='int', limits=[0, 255], value=25, step=1),
-    dict(name='linewidth_start', type='float', limits=[0.1, 50], value=1, step=0.1),
-    dict(name='linewidth_stop', type='float', limits=[0.2, 50], value=8, step=0.1),
+    dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
+    dict(name='Color', type='list', limits= ['white','blue' ],value='white' ),
+    dict(name='Extra line', type='bool' ),
+    dict(name='Line 1', type='list', limits = readable_objects ),
+    
 ]
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
 pt = pg.parametertree.ParameterTree(showHeader=False)
@@ -113,20 +113,28 @@ d1.addWidget(pt)
 w4 = pg.GraphicsLayoutWidget(show=True)
 w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
 p2 = w4.addPlot()
+
 data1 = np.random.normal(size=300)
 data2 = np.random.normal(size=300)
-curve1 = p2.plot(data1, pen={'color':(0, 156, 129), 'width':3})
-curve2 = p2.plot(data2, pen={'color':'w', 'width':3})
+curve1 = p2.plot(data1) #, pen={'color':(0, 156, 129), 'width':3}
+curve2 = p2.plot(data2, pen={'color':(0, 156, 129), 'width':3})
+
 pg.setConfigOptions(antialias=True)
 
 ptr1 = 0
 lastTime = perf_counter()
 fps = None
+#lines   = params.child('nb_lines').value()
 
-def update1():
+
+def update_plot():
     global data1, data2, ptr1, fps, lastTime
 
-    nb_glow_lines   = params.child('nb glow lines').value()
+    line_color       = params.child('Color').value()
+    line_width       = params.child('linewidth').value()
+    Object       = params.child('Line 1').value()
+    
+    
 
     data1[:-1] = data1[1:]  # shift data in the array one sample left
                             # (see also: np.roll)
@@ -137,9 +145,12 @@ def update1():
     data2[-1] = np.random.normal()
     
     ptr1 += 1
+
+
+
     curve1.setData(data1)
     curve1.setPos(ptr1, 0)
-
+    curve1.setPen(color=line_color, width=line_width)
     curve2.setData(data2)
     curve2.setPos(ptr1, 0)
 
@@ -156,88 +167,11 @@ def update1():
 
 # update all plots
 timer = pg.QtCore.QTimer()
-timer.timeout.connect(update1)
-timer.start(15)
+timer.timeout.connect(update_plot)
+timer.start(15)   
+
 
 d4.addWidget(w4)
-
-
-
-
-#---------------------------------------------------------------------------------------------------
-#Controlled Plot
-pg.setConfigOptions(antialias=True)
-pw2 = pg.PlotWidget()
-# Add some noise on the curves
-noise  = 0.1
-noises: list = np.random.rand(6, 100)*noise
-# Dedicated colors which look "good"
-
-colors = ['#08F7FE', '#FE53BB', '#F5D300', '#00ff41', '#FF0000', '#9467bd', ]
-def update_plot():
-    
-    pw2.clear()
-
-    nb_glow_lines   = params.child('nb glow lines').value()
-    alpha_start     = params.child('alpha_start').value()
-    alpha_stop      = params.child('alpha_stop').value()
-    alpha_underglow = params.child('alpha_underglow').value()
-    linewidth_start = params.child('linewidth_start').value()
-    linewidth_stop  = params.child('linewidth_stop').value()
-    nb_lines        = params.child('nb_lines').value()
-
-    xs = []
-    ys = []
-    for i in range(nb_lines):
-
-        xs.append(np.linspace(0, 2*np.pi, 100)-i)
-        ys.append(np.sin(xs[-1])*xs[-1]-i/3+noises[i])
-
-    # For each line we:
-    # 1. Add a PlotDataItem with the pen and brush corresponding to the line
-    #    color and the underglow
-    # 2. Add nb_glow_lines PlotDatamItem with increasing width and low alpha
-    #    to create the glow effect
-    for color, x, y in zip(colors, xs, ys):
-        pen = pg.mkPen(color=color)
-        if params.child('add_underglow').value()=='Full':
-            kw={'fillLevel' : 0.0,
-                'fillBrush' : pg.mkBrush(color='{}{:02x}'.format(color, alpha_underglow)),
-                }
-        elif params.child('add_underglow').value()=='Gradient':
-            grad = QtGui.QLinearGradient(x.mean(), y.min(), x.mean(), y.max())
-            grad.setColorAt(0.001, pg.mkColor(color))
-            grad.setColorAt(abs(y.min())/(y.max()-y.min()), pg.mkColor('{}{:02x}'.format(color, alpha_underglow)))
-            grad.setColorAt(0.999, pg.mkColor(color))
-            brush = QtGui.QBrush(grad)
-            kw={'fillLevel' : 0.0,
-                'fillBrush' : brush,
-                }
-        else:
-            kw = {}
-        pw2.addItem(pg.PlotDataItem(x, y, pen=pen, **kw))
-
-
-        if params.child('make_line_glow').value():
-            alphas = np.linspace(alpha_start, alpha_stop, nb_glow_lines, dtype=int)
-            lws = np.linspace(linewidth_start, linewidth_stop, nb_glow_lines)
-
-            for alpha, lw in zip(alphas, lws):
-
-                pen = pg.mkPen(color='{}{:02x}'.format(color, alpha),
-                               width=lw,
-                               connect="finite")
-
-                pw2.addItem(pg.PlotDataItem(x, y,
-                                            pen=pen))
-
-params.sigTreeStateChanged.connect(update_plot)
-update_plot()
-d7.addWidget(pw2)
-
-
-
-
 
 
 win.show()
