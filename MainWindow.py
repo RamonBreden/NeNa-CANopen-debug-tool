@@ -100,14 +100,24 @@ readable_objects= [0x12315, 0x4546, 'random' ]
 children = [
     dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color', type='list', limits= ['white','blue' ],value='white' ),
-    dict(name='Extra line', type='bool' ),
+    dict(name='Lines', type='int', limits= [1, 5] ),
+    dict(name='Plot objects', type='bool', value= False ),
     dict(name='Line 1', type='list', limits = readable_objects ),
+    
     
 ]
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
+
+
 pt = pg.parametertree.ParameterTree(showHeader=False)
 pt.setParameters(params)
+
+
+
 d1.addWidget(pt)
+
+
+
 
 #Scroll Plot ------------------------------------------------------------------------------------------------
 w4 = pg.GraphicsLayoutWidget(show=True)
@@ -132,8 +142,10 @@ def update_plot():
 
     line_color       = params.child('Color').value()
     line_width       = params.child('linewidth').value()
-    Object       = params.child('Line 1').value()
-    
+    amount_of_lines =  params.child('Lines').value()
+    #Object       = params.child('Line 1').value()
+
+
     
 
     data1[:-1] = data1[1:]  # shift data in the array one sample left
@@ -165,14 +177,44 @@ def update_plot():
         fps = fps * (1 - s) + (1.0 / dt) * s
     p2.setTitle("%0.2f fps" % fps)
 
-# update all plots
 timer = pg.QtCore.QTimer()
 timer.timeout.connect(update_plot)
-timer.start(15)   
-
+timer.start(15)  
 
 d4.addWidget(w4)
 
+
+
+def updateparametertree():
+    w2.write("Parameter tree changing\n", scrollToBottom='auto')
+    amount_of_lines =  params.child('Lines').value()
+
+    for i in range(amount_of_lines):
+        num = str(i+1)
+
+        #params.addChild(dict(name= 'line '+num, type='int')  ) 
+        lineparameters= [ 
+            dict(name='Node', type='int', limits= [1, 5] ),
+            dict(name='object', type='int', limits= [1, 5] ),
+            dict(name='Color', type='list', limits= ['white','blue' ],value='white' ),
+        ]
+        line_params = pg.parametertree.Parameter.create(name='line'+num, type='group', children=lineparameters)
+        pt.addParameters(line_params)
+
+
+   # line_params = pg.parametertree.Parameter.create(name='Line Paramaters', type='group', children=lineparameters)
+    #params.linename.Addchild(name= 'line'+i, type='int'  ) 
+    #start plotting data when the it is enabled.
+
+    if params.child('Plot objects').value() == True:
+        # update all plots
+
+        print ('done')
+        timer = pg.QtCore.QTimer()
+        timer.timeout.connect(update_plot)
+        timer.start(15)   
+
+params.sigTreeStateChanged.connect(updateparametertree)
 
 win.show()
 

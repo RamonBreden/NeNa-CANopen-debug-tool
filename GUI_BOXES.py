@@ -77,7 +77,9 @@ def NodeTree():
     return(w6)
 
 #Make the Connection manager window/box
-def ConnectWidget(w2): 
+def ConnectWidget(w2):
+    """ Makes a widget that calls the CAN_COM library to connect to a canbus"""
+
     #call layoutmanager and make the window w3
     w3 = pg.LayoutWidget()
     #Make buttons and inputsfields widgets
