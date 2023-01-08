@@ -1,10 +1,28 @@
 import time
+import numpy as np
 
 class CAN_COM():
     """This class enables communication with a CAN bus using a CAN to USB adapter.
     """
 
-    # Heb hier de init verwijderd, misschien dat dat problemen gaat geven
+    def __init__(self, bustype, channel, bitrate) -> None:
+        """This function initializes a connection to a CAN bus 
+        through a CAN to USB adapter.
+
+        :param bustype:
+            Type of bus to connect with, use 'pcan' for the PEAK adapter.
+        :param channel:
+            Channel to communicate over, use 'PCAN_USBBUS1' for the PEAK adapter.
+        :param bitrate:
+            Bitrate of the CAN bus in kbit/s. use 250000 for the NeNa system.
+        """
+        # Check if the variables have a value
+        if bustype is None:
+            raise ValueError('bustype variable has no value')
+        if channel is None:
+            raise ValueError('channel variable has no value')
+        if bitrate is None:
+            raise ValueError('bitrate variable has no value')
 
     def scan_bus(self):
         """This function scans for nodes on the network and returns all
@@ -13,9 +31,6 @@ class CAN_COM():
         :return: 
             A list with connected nodes
         """
-        
-        # Even wachten
-        time.sleep(0.5)
 
         # Add all nodes on the bus to this list
         node_list = [40, 41]
@@ -55,11 +70,11 @@ class CAN_COM():
         :param write_val:
             The value that should be written to the object ID (integer).
         """
-        # Deze moet ik nog fixen!
-        # Connect to node
-        rnode= self.network.add_node(node_id, "PD4E_test.eds", False)
-        # Read byte array from node
-        read_byte = rnode.sdo.upload(ob_id, sub_idx)
-        # Convert byte array to integer
-        conv_int = int.from_bytes(read_byte, "little")
-        return conv_int
+
+        # twee verschillende datastreams
+        if node_id == 40 and ob_id == 6045 and sub_idx == 0:
+            return np.random.normal(size=300)
+        elif node_id == 40 and ob_id == 6046 and sub_idx == 0:
+            return np.random.normal(size=200)
+        else:
+            return "Invalid Input"

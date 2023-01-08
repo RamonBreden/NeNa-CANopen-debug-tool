@@ -1,6 +1,7 @@
 #GUI_BOXES
 import sys
-from CAN_COM import *
+#from CAN_COM import *
+from CAN_COM_DEMO import *
 import numpy as np
 import qdarktheme
 import numpy as np
@@ -114,7 +115,10 @@ def ConnectWidget(w2):
         #run the Connect script
         #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
         #CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
-        
+
+        #DEMO
+        CAN_COM(bustype.text(), channel.text(), bitrate.currentText()) # Werkt wel met currentText!!
+        w2.write(bitrate.currentText())
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
     Connect_button.clicked.connect(lambda: connect(bitrate_list, bitrate))

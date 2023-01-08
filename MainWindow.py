@@ -13,7 +13,8 @@ would consist of dockable components.
 from GUI_BOXES import *
 
 import sys
-from CAN_COM import *
+#from CAN_COM import *
+from CAN_COM_DEMO import *
 import numpy as np
 import qdarktheme
 import numpy as np
@@ -83,9 +84,8 @@ d2.addWidget(w2)
 #generate the w3 widget and put it into the d3 box
 d3.addWidget(ConnectWidget(w2))
 
-
-#!!!!!!!!!!!!!!!!!!!dezed moet nog geimporteerd worden van de CAN_COM class
-node_list= [40, 41, 10]
+# Gefixt op een janky manier ;) 
+node_list = CAN_COM.scan_bus(1)
 
 #make the window to write date to the NeNa
 d5.addWidget(WriteWidget(w2, node_list))
