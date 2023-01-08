@@ -95,23 +95,19 @@ d6.addWidget(NodeTree())
 
 #----------------------------------------------------------------------------------------------------
 # create the ParameterTree
-readable_objects= [0x12315, 0x4546, 'random' ]
+
 
 children = [
     dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color', type='list', limits= ['white','blue' ],value='white' ),
     dict(name='Lines', type='int', limits= [1, 5] ),
     dict(name='Plot objects', type='bool', value= False ),
-    dict(name='Line 1', type='list', limits = readable_objects ),
-    
-    
+    dict(name='amount lines', type='int', limits= [1, 5] ),
+    dict(name='Line 1', type='list', limits = [] ), 
 ]
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
-
-
 pt = pg.parametertree.ParameterTree(showHeader=False)
 pt.setParameters(params)
-
 
 
 d1.addWidget(pt)
@@ -183,11 +179,11 @@ timer.start(15)
 
 d4.addWidget(w4)
 
-
-
+#--------------------------------------------------------------------------------------------------------------------------------------------
+# the function that updates the parameter tree when it is i called
 def updateparametertree():
     w2.write("Parameter tree changing\n", scrollToBottom='auto')
-    amount_of_lines =  params.child('Lines').value()
+    amount_of_lines =  params.child('amount lines').value()
 
     for i in range(amount_of_lines):
         num = str(i+1)
@@ -200,6 +196,7 @@ def updateparametertree():
         ]
         line_params = pg.parametertree.Parameter.create(name='line'+num, type='group', children=lineparameters)
         pt.addParameters(line_params)
+        
 
 
    # line_params = pg.parametertree.Parameter.create(name='Line Paramaters', type='group', children=lineparameters)
@@ -214,9 +211,10 @@ def updateparametertree():
         timer.timeout.connect(update_plot)
         timer.start(15)   
 
-params.sigTreeStateChanged.connect(updateparametertree)
+params.sigTreeStateChanged.connect(updateparametertree) # looks at the parameter tree and when it changes it will run the update function.
 
+#shows the window that is made 
 win.show()
-
+#This function keeps the GUI running 
 if __name__ == '__main__':
     pg.exec()
