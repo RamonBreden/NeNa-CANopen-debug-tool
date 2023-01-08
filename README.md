@@ -1,5 +1,3 @@
 # NeNa-CANopen-debug-tool
 
-Provide information about this tool here
-
-Dit is een test!!
+This project involves developing a debug tool for reading and writing CAN messages from and to two Nanotec PD4-E closed loop stepper motors which drive the wheels of an Automated Guided Vehicle. The tool is programmed in Python using the CANopen library for the communication protocol and the PyQtGraph library for (close to) real-time data visualization and GUI functionality. The debug tool allows for the monitoring of the motor performance and the visualization of the CAN data. Additionally, the tool allows for the writing of CAN messages to the motors, in order to adjust parameters or send commands. The debug tool is designed to be user-friendly and intuitive, allowing for easy debugging and troubleshooting of the system.
