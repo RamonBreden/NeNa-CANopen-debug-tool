@@ -80,7 +80,6 @@ class CAN_COM():
         write_byte = write_val.to_bytes(byte_length, "little")
         # Send bytes to node
         wnode.sdo.download(ob_id, sub_idx, write_byte)
-        print("write done")
 
     def download(self, node_id, ob_id, sub_idx):
         """ This function reads a byte array from an object ID 
