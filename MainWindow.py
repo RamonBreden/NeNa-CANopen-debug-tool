@@ -102,7 +102,10 @@ children = [
     dict(name='Lines', type='int', limits= [1, 5] ),
     dict(name='Plot objects', type='bool', value= False ),
     dict(name='amount lines', type='int', limits= [1, 5] ),
-    dict(name='Line 1', type='list', limits = [] ), 
+    dict(name='Line 1', type='list', limits = [] ),
+    dict(name='Node ID line 1', type='int', limits= [1, 5] ),
+    dict(name='Object ID line 1', type='int', limits= [1, 5] ),
+    dict(name='Sub index line 1', type='int', limits= [1, 5] ), 
 ]
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
 pt = pg.parametertree.ParameterTree(showHeader=False)
@@ -110,55 +113,49 @@ pt.setParameters(params)
 
 d1.addWidget(pt)
 
-
-
-
 #Scroll Plot ------------------------------------------------------------------------------------------------
 w4 = pg.GraphicsLayoutWidget(show=True)
 w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
 p2 = w4.addPlot()
 
-data1 = np.random.normal(size=300)
-data2 = np.random.normal(size=300)
-curve1 = p2.plot(data1) #, pen={'color':(0, 156, 129), 'width':3}
-curve2 = p2.plot(data2, pen={'color':(0, 156, 129), 'width':3})
+network = canopen.Network()
+network.connect(bustype='pcan', channel='PCAN_USBBUS1', bitrate=250000)
+node = network.add_node(41, "PD4E_test.eds", False)
+
+#curve1 = p2.plot(pen={'color':(0, 156, 129), 'width':3})
+curve2 = p2.plot()
+
+windowWidth = 500
+#Xm1 = np.linspace(0,0,windowWidth)
+Xm2 = np.linspace(0,0,windowWidth)            
 
 pg.setConfigOptions(antialias=True)
 
-ptr1 = 0
+ptr1 = -windowWidth
 lastTime = perf_counter()
 fps = None
 #lines   = params.child('nb_lines').value()
 
 
 def update_plot():
-    global data1, data2, ptr1, fps, lastTime
+    global Xm2, node, ptr1, fps, lastTime
 
     line_color       = params.child('Color').value()
     line_width       = params.child('linewidth').value()
     amount_of_lines =  params.child('Lines').value()
-    #Object       = params.child('Line 1').value()
 
+    Xm2[:-1] = Xm2[1:]
 
-    
+    read_byte_2 = node.sdo.upload(0x2039, 4)
+    read_int_2 = int.from_bytes(read_byte_2, "little")
 
-    data1[:-1] = data1[1:]  # shift data in the array one sample left
-                            # (see also: np.roll)
-    data1[-1] = np.random.normal()
-
-    data2[:-1] = data2[1:]  # shift data in the array one sample left
-                            # (see also: np.roll)
-    data2[-1] = np.random.normal()
+    Xm2[-1] = float(read_int_2)
     
     ptr1 += 1
 
-
-
-    curve1.setData(data1)
-    curve1.setPos(ptr1, 0)
-    curve1.setPen(color=line_color, width=line_width)
-    curve2.setData(data2)
+    curve2.setData(Xm2)
     curve2.setPos(ptr1, 0)
+    curve2.setPen(color=line_color, width=line_width)
 
     now = perf_counter()
     dt = now - lastTime
@@ -173,7 +170,8 @@ def update_plot():
 
 timer = pg.QtCore.QTimer()
 timer.timeout.connect(update_plot)
-timer.start(15)  
+#timer.timeout.connect(update_plot)
+#timer.start(15)  
 
 d4.addWidget(w4)
 
@@ -185,6 +183,13 @@ d4.addWidget(w4)
 def updateparametertree():
     w2.write("Parameter tree changing\n", scrollToBottom='auto')
     amount_of_lines =  params.child('amount lines').value()
+    plotobject = params.child('Plot objects').value()
+
+    if plotobject == True:
+        timer.start(15)
+    else:
+        timer.stop()
+
 
     for i in range(amount_of_lines):
         num = str(i+1)
@@ -202,15 +207,7 @@ def updateparametertree():
 
    # line_params = pg.parametertree.Parameter.create(name='Line Paramaters', type='group', children=lineparameters)
     #params.linename.Addchild(name= 'line'+i, type='int'  ) 
-    #start plotting data when the it is enabled.
-
-    if params.child('Plot objects').value() == True:
-        # update all plots
-
-        print ('done')
-        timer = pg.QtCore.QTimer()
-        timer.timeout.connect(update_plot)
-        timer.start(15)   
+    #start plotting data when the it is enabled.  
 
 params.sigTreeStateChanged.connect(updateparametertree) # looks at the parameter tree and when it changes it will run the update function.
 
