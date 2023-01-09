@@ -1,7 +1,7 @@
 #GUI_BOXES
 import sys
-#from CAN_COM import *
-from CAN_COM_DEMO import *
+from CAN_COM import *
+#from CAN_COM_DEMO import *
 import numpy as np
 import qdarktheme
 import numpy as np
@@ -109,20 +109,16 @@ def ConnectWidget(w2):
     w3.addWidget(Light, row= 3, col=0)
 
     #define the action of the button
-    def connect(bitrate_list, bitrate):
+    def connect(bitrate):
         #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
         w2.write("connecting....\n", scrollToBottom='auto')
         #run the Connect script
-        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
-        #CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
-
-        #DEMO
-        CAN_COM(bustype.text(), channel.text(), int(bitrate.currentText())) # Werkt wel met currentText!!
-        node_list = CAN_COM.scan_bus(1)
+        connect = CAN_COM(bustype.text(), channel.text(), int(bitrate.currentText())) # Werkt wel met currentText!!
+        node_list = connect.scan_bus()
         string_of_nums = ','.join(str(num) for num in node_list)
         w2.write("Found nodes: " + string_of_nums + "\n")
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
-    Connect_button.clicked.connect(lambda: connect(bitrate_list, bitrate))
+    Connect_button.clicked.connect(lambda: connect(bitrate))
     #send the finised window widget outside the function
     return w3
