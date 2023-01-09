@@ -84,15 +84,14 @@ d2.addWidget(w2)
 #generate the w3 widget and put it into the d3 box
 d3.addWidget(ConnectWidget(w2)[0])
 
-# Gefixt op een janky manier ;)
 
-node_list = ConnectWidget(w2)[1]
-#make the window to write date to the NeNa
-d5.addWidget(WriteWidget(w2, node_list))
+if ConnectWidget(w2)[2] == True:
+    node_list = ConnectWidget(w2)[1]
+    #make the window to write date to the NeNa
+    d5.addWidget(WriteWidget(w2, node_list))
 
-#make the list of nodes on the canbus, with dropdown list of the objects
-d6.addWidget(NodeTree(node_list))
-
+    #make the list of nodes on the canbus, with dropdown list of the objects
+    d6.addWidget(NodeTree(node_list))
 #----------------------------------------------------------------------------------------------------
 # create the ParameterTree
 
@@ -177,6 +176,9 @@ timer.timeout.connect(update_plot)
 timer.start(15)  
 
 d4.addWidget(w4)
+
+
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # the function that updates the parameter tree when it is i called

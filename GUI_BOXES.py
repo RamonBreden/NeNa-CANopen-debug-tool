@@ -81,7 +81,7 @@ def NodeTree(node_list):
 #Make the Connection manager window/box
 def ConnectWidget(w2):
     """ Makes a widget that calls the CAN_COM library to connect to a canbus"""
-    global node_list
+    global node_list, connected
     #call layoutmanager and make the window w3
     w3 = pg.LayoutWidget()
     #Make buttons and inputsfields widgets
@@ -113,9 +113,10 @@ def ConnectWidget(w2):
     
     w3.addWidget(Connect_button, row=3, col=1) 
     w3.addWidget(Light, row= 3, col=0)
-
+    node_list = ['not connected']
+    connected = False
     #define the action of the button
-    def connect(bitrate):
+    def connect():
         global connection
         #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
         w2.write("connecting....\n", scrollToBottom='auto')
@@ -129,9 +130,8 @@ def ConnectWidget(w2):
 
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
-        NodeTree(node_list)
-        WriteWidget(w2, node_list)
-        return node_list
+        connected = True   
+        return node_list, connected
 
     Connect_button.clicked.connect(connect)
 
@@ -139,4 +139,4 @@ def ConnectWidget(w2):
     #send the finised window widget outside the function
 
     
-    return w3, node_list
+    return w3, node_list, connected
