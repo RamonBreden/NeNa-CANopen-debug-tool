@@ -82,12 +82,11 @@ w2 = ConsoleWidget()
 d2.addWidget(w2)
 
 #generate the w3 widget and put it into the d3 box
-d3.addWidget(ConnectWidget(w2))
+d3.addWidget(ConnectWidget(w2)[0])
 
 # Gefixt op een janky manier ;)
 
-node_list = [40, 41]
-
+node_list = ConnectWidget(w2)[1]
 #make the window to write date to the NeNa
 d5.addWidget(WriteWidget(w2, node_list))
 

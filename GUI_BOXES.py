@@ -59,11 +59,11 @@ def WriteWidget(w2, node_list):
 
     return w5 
 
-
-
+#make node tree viewer window
 def NodeTree(node_list):
     w6 = pg.TreeWidget()
-    ObjectlistNode1= [6060, 6061, 6062]
+    w6.setHeaderHidden(True)
+    ObjectlistNode1= ['Example object list!',6060, 6061, 6062]
 
     for i in range(len(node_list)):
         
@@ -79,7 +79,7 @@ def NodeTree(node_list):
 #Make the Connection manager window/box
 def ConnectWidget(w2):
     """ Makes a widget that calls the CAN_COM library to connect to a canbus"""
-
+    global node_list
     #call layoutmanager and make the window w3
     w3 = pg.LayoutWidget()
     #Make buttons and inputsfields widgets
@@ -89,11 +89,11 @@ def ConnectWidget(w2):
     channel=QComboBox()
     channel_list = ['PCAN_USBBUS1','none'] #list of bustypes possible
     channel.addItems(channel_list)
-
     bitrate=QComboBox()
     bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
     bitrate.addItems(map(str, bitrate_list))
     
+    #Make button
     Connect_button=QtWidgets.QPushButton("Connect")
     #Make the light to communicate the state
     Light=QtWidgets.QPushButton("")
@@ -112,21 +112,29 @@ def ConnectWidget(w2):
     w3.addWidget(Connect_button, row=3, col=1) 
     w3.addWidget(Light, row= 3, col=0)
 
-    #define the action of the button
-    def connect(bitrate):
-        #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
+    node_list = ['not connected']
+
+    #the action of the connect button
+    def connect():
         w2.write("connecting....\n", scrollToBottom='auto')
 
-        connection = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!
-        node_list = connection.scan_bus()
-
-        
+        #connection = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!     
+        #node_list = connection.scan_bus()
+        node_list= [50,40]
         #write the node list to the consel
         string_of_nums = ','.join(str(num) for num in node_list)
         w2.write("Found nodes: " + string_of_nums + "\n")
 
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
-    Connect_button.clicked.connect(lambda: connect(bitrate))
+        NodeTree(node_list)
+        WriteWidget(w2, node_list)
+        return node_list
+
+    Connect_button.clicked.connect(connect)
+
+    
     #send the finised window widget outside the function
-    return w3
+
+    
+    return w3, node_list
