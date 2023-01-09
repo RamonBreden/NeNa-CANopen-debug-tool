@@ -84,7 +84,7 @@ d2.addWidget(w2)
 Connectvariabeles= ConnectWidget(w2)
 w3 =Connectvariabeles[0]
 node_list = Connectvariabeles[1]
-#connected = Connectvariabeles[1]
+connected = Connectvariabeles[2]
 
 d3.addWidget(w3)
 
@@ -120,10 +120,6 @@ w4 = pg.GraphicsLayoutWidget(show=True)
 w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
 p2 = w4.addPlot()
 
-#network = canopen.Network()
-#network.connect(bustype='pcan', channel='PCAN_USBBUS1', bitrate=250000)
-#node = network.add_node(41, "PD4E_test.eds", False)
-
 #curve1 = p2.plot(pen={'color':(0, 156, 129), 'width':3})
 curve2 = p2.plot()
 
@@ -146,9 +142,22 @@ def update_plot():
     line_width       = params.child('linewidth').value()
     amount_of_lines =  params.child('Lines').value()
 
+    node= 41 # moet komen van can bus connection
+
+
+    startup= 0
+    if startup == 0:
+        network = canopen.Network()
+        network.connect(bustype='pcan', channel='PCAN_USBBUS1', bitrate=250000)
+        rnode= network.add_node(node, "PD4E_test.eds", False)
+        startup=1
+
+
+
+
     Xm2[:-1] = Xm2[1:]
 
-    read_byte_2 = node.sdo.upload(0x2039, 4)
+    read_byte_2 = rnode.sdo.upload(0x2039, 4)
     read_int_2 = int.from_bytes(read_byte_2, "little")
 
     Xm2[-1] = float(read_int_2)
@@ -203,12 +212,10 @@ def updateparametertree():
         ]
         line_params = pg.parametertree.Parameter.create(name='line'+num, type='group', children=lineparameters)
         pt.addParameters(line_params)
-        
 
-
-   # line_params = pg.parametertree.Parameter.create(name='Line Paramaters', type='group', children=lineparameters)
-    #params.linename.Addchild(name= 'line'+i, type='int'  ) 
-    #start plotting data when the it is enabled.  
+# line_params = pg.parametertree.Parameter.create(name='Line Paramaters', type='group', children=lineparameters)
+#params.linename.Addchild(name= 'line'+i, type='int'  ) 
+#start plotting data when the it is enabled.  
 
 params.sigTreeStateChanged.connect(updateparametertree) # looks at the parameter tree and when it changes it will run the update function.
 
@@ -217,4 +224,3 @@ win.show()
 #This function keeps the GUI running 
 if __name__ == '__main__':
     pg.exec()
-
