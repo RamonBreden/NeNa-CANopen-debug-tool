@@ -58,7 +58,6 @@ def WriteWidget(w2, node_list):
     w5.addWidget(UpdateButton, row=4, col=0)
     
     def UpdateLists(w2):
-        print('remove')
         QComboBox.clear(Node)
         ##    Node.removeItem(1)
         Node.addItems(map(str, node_listnew))
@@ -171,7 +170,6 @@ def ConnectWidget(w2):
     
     if connected == 0:
         node_list = ['not connected']
-        print(connected)
     else:
         node_list=node_listnew
     
