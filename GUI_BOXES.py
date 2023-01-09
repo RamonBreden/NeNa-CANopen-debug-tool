@@ -160,6 +160,8 @@ def ConnectWidget(w2):
      
         #Make the widgets with the updated nodelist
         connected = 1
+
+        connectpcan.disconnect()
         
         return node_listnew, connected, connectpcan
 
@@ -173,4 +175,4 @@ def ConnectWidget(w2):
     else:
         node_list=node_listnew
     
-    return w3, node_list
+    return w3, node_list, connected
