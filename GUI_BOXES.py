@@ -53,9 +53,9 @@ def WriteWidget(w2, node_list):
 
     def upload():
         #send the folling things to the Connecting thing
-        connection.upload(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()), int(variable.text()))
+        connectpcan.upload(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()), int(variable.text()))
         w2.write('Uploading...\n' , scrollToBottom='auto')
-        receive = connection.download(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()))
+        receive = connectpcan.download(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()))
         w2.write('Succesfully uploaded ' + str(receive) + ' to node ' + Node.currentText() + ' to object ' + Object.text() + ' at sub index ' + Sub_index.text() + '\n' , scrollToBottom='auto')
     UploadButton.clicked.connect(upload)
 
@@ -117,21 +117,20 @@ def ConnectWidget(w2):
     connected = False
     #define the action of the button
     def connect():
-        global connection
-        #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
+        global connectpcan
         w2.write("connecting....\n", scrollToBottom='auto')
 
-        #connection = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!     
-        #node_list = connection.scan_bus()
-        node_list= [50,40]
-        #write the node list to the consel
+        connectpcan = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText()))
+        #node_list= [50,40]
+        node_list = connectpcan.scan_bus()
+        #write the node list to the console
         string_of_nums = ','.join(str(num) for num in node_list)
         w2.write("Found nodes: " + string_of_nums + "\n")
 
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
         connected = True   
-        return node_list, connected
+        return node_list, connected, connectpcan
 
     Connect_button.clicked.connect(connect)
 
