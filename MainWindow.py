@@ -103,12 +103,12 @@ children = [
     dict(name='Plot objects', type='bool', value= False ),
 
     dict(name='Line 1'),
-    dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
+    dict(name='Width line 1', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 1', type='int', limits= [1, 5] ),
     dict(name='Object ID line 1', type='int', limits= [1, 5] ),
     dict(name='Sub index line 1', type='int', limits= [1, 5] ), 
-    dict(name='Line 2', color ="white"  ),
+    dict(name='Line 2'),
     dict(name='Color line 2', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 2', type='int', limits= [1, 5] ),
     dict(name='Object ID line 2', type='int', limits= [1, 5] ),
@@ -154,8 +154,8 @@ fps = None
 def update_plot():
     global Xm2, node, ptr1, fps, lastTime
 
-    line_color       = params.child('Color').value()
-    line_width       = params.child('linewidth').value()
+    line_color       = params.child('Color line 1').value()
+    line_width       = params.child('Width line 1').value()
     amount_of_lines =  params.child('Lines').value()
 
     Xm2[:-1] = Xm2[1:]
