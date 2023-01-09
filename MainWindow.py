@@ -92,7 +92,7 @@ node_list = [40, 41]
 d5.addWidget(WriteWidget(w2, node_list))
 
 #make the list of nodes on the canbus, with dropdown list of the objects
-d6.addWidget(NodeTree())
+d6.addWidget(NodeTree(node_list))
 
 #----------------------------------------------------------------------------------------------------
 # create the ParameterTree
