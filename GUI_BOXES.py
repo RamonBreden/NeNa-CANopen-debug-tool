@@ -61,9 +61,8 @@ def WriteWidget(w2, node_list):
 
 
 
-def NodeTree():
+def NodeTree(node_list):
     w6 = pg.TreeWidget()
-    node_list = [40, 41, 42]
     ObjectlistNode1= [6060, 6061, 6062]
 
     for i in range(len(node_list)):
