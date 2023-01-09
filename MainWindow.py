@@ -120,9 +120,9 @@ w4 = pg.GraphicsLayoutWidget(show=True)
 w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
 p2 = w4.addPlot()
 
-network = canopen.Network()
-network.connect(bustype='pcan', channel='PCAN_USBBUS1', bitrate=250000)
-node = network.add_node(41, "PD4E_test.eds", False)
+#network = canopen.Network()
+#network.connect(bustype='pcan', channel='PCAN_USBBUS1', bitrate=250000)
+#node = network.add_node(41, "PD4E_test.eds", False)
 
 #curve1 = p2.plot(pen={'color':(0, 156, 129), 'width':3})
 curve2 = p2.plot()

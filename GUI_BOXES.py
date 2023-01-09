@@ -146,15 +146,14 @@ def ConnectWidget(w2):
     #define the action of the button
     connected = 0
     def connect():
-        global connection, node_listnew, connected
-        #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
+        global connectpcan, node_listnew, connected
         w2.write("connecting....\n", scrollToBottom='auto')
 
-        #connection = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!     
-        #node_list = connection.scan_bus()
-        node_listnew= [50,40]
+        connectpcan = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!     
+        node_listnew = connectpcan.scan_bus()
+        #node_list= [50,40]
         #write the node list to the consel
-        string_of_nums = ','.join(str(num) for num in node_list)
+        string_of_nums = ','.join(str(num) for num in node_listnew)
         w2.write("Found nodes: " + string_of_nums + "\n")
 
         #When connected set light to green
@@ -163,7 +162,7 @@ def ConnectWidget(w2):
         #Make the widgets with the updated nodelist
         connected = 1
         
-        return node_listnew, connected
+        return node_listnew, connected, connectpcan
 
 
 
@@ -176,4 +175,4 @@ def ConnectWidget(w2):
     else:
         node_list=node_listnew
     
-    return w3, node_list 
+    return w3, node_list
