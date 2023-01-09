@@ -89,24 +89,36 @@ connected = Connectvariabeles[2]
 d3.addWidget(w3)
 
 w5= WriteWidget(w2, node_list)
-w6=NodeTree(node_list)        
+#w6=NodeTree(node_list)        
 
 d5.addWidget(w5)
-d6.addWidget(w6)        
+#d6.addWidget(w6)        
 #----------------------------------------------------------------------------------------------------
 # create the ParameterTree
 
 
 children = [
-    dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
-    dict(name='Color', type='list', limits= ['white','blue' ],value='white' ),
     dict(name='Lines', type='int', limits= [1, 5] ),
+    dict(name='Plot length', type='int', limits= [1, 500], value= 15 ),
     dict(name='Plot objects', type='bool', value= False ),
-    dict(name='amount lines', type='int', limits= [1, 5] ),
-    dict(name='Line 1', type='list', limits = [] ),
+
+    dict(name='Line 1'),
+    dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
+    dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 1', type='int', limits= [1, 5] ),
     dict(name='Object ID line 1', type='int', limits= [1, 5] ),
     dict(name='Sub index line 1', type='int', limits= [1, 5] ), 
+    dict(name='Line 2', color ="white"  ),
+    dict(name='Color line 2', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
+    dict(name='Node ID line 2', type='int', limits= [1, 5] ),
+    dict(name='Object ID line 2', type='int', limits= [1, 5] ),
+    dict(name='Sub index line 2', type='int', limits= [1, 5] ), 
+    dict(name='Line 3'),
+    dict(name='Color line 3', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
+    dict(name='Node ID line 3', type='int', limits= [1, 5] ),
+    dict(name='Object ID line 3', type='int', limits= [1, 5] ),
+    dict(name='Sub index line 3', type='int', limits= [1, 5] ), 
+
 ]
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
 pt = pg.parametertree.ParameterTree(showHeader=False)
@@ -192,7 +204,6 @@ d4.addWidget(w4)
 # the function that updates the parameter tree when it is i called
 def updateparametertree():
     w2.write("Parameter tree changing\n", scrollToBottom='auto')
-    amount_of_lines =  params.child('amount lines').value()
     plotobject = params.child('Plot objects').value()
 
     if plotobject == True:
@@ -200,22 +211,6 @@ def updateparametertree():
     else:
         timer.stop()
 
-
-    for i in range(amount_of_lines):
-        num = str(i+1)
-
-        #params.addChild(dict(name= 'line '+num, type='int')  ) 
-        lineparameters= [ 
-            dict(name='Node', type='int', limits= [1, 5] ),
-            dict(name='object', type='int', limits= [1, 5] ),
-            dict(name='Color', type='list', limits= ['white','blue' ],value='white' ),
-        ]
-        line_params = pg.parametertree.Parameter.create(name='line'+num, type='group', children=lineparameters)
-        pt.addParameters(line_params)
-
-# line_params = pg.parametertree.Parameter.create(name='Line Paramaters', type='group', children=lineparameters)
-#params.linename.Addchild(name= 'line'+i, type='int'  ) 
-#start plotting data when the it is enabled.  
 
 params.sigTreeStateChanged.connect(updateparametertree) # looks at the parameter tree and when it changes it will run the update function.
 
