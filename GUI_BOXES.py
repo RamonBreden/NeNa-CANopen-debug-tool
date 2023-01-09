@@ -117,15 +117,10 @@ def ConnectWidget(w2):
     def connect(bitrate):
         #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
         w2.write("connecting....\n", scrollToBottom='auto')
-        #run the Connect script
-        connect = CAN_COM(bustype.text(), channel.text(), int(bitrate.currentText())) # Werkt wel met currentText!!
-        node_list = connect.scan_bus()
-        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
-        #CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
 
-        #DEMO
-        CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!
-        node_list = CAN_COM.scan_bus(1)
+        connection = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!
+        node_list = connection.scan_bus()
+
         
         #write the node list to the consel
         string_of_nums = ','.join(str(num) for num in node_list)
