@@ -117,8 +117,10 @@ def ConnectWidget(w2):
         #CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
 
         #DEMO
-        CAN_COM(bustype.text(), channel.text(), bitrate.currentText()) # Werkt wel met currentText!!
-        w2.write(bitrate.currentText())
+        CAN_COM(bustype.text(), channel.text(), int(bitrate.currentText())) # Werkt wel met currentText!!
+        node_list = CAN_COM.scan_bus(1)
+        string_of_nums = ','.join(str(num) for num in node_list)
+        w2.write("Found nodes: " + string_of_nums + "\n")
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
     Connect_button.clicked.connect(lambda: connect(bitrate_list, bitrate))

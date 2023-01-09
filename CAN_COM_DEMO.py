@@ -17,12 +17,13 @@ class CAN_COM():
             Bitrate of the CAN bus in kbit/s. use 250000 for the NeNa system.
         """
         # Check if the variables have a value
-        if bustype is None:
+        if bustype == 0:
             raise ValueError('bustype variable has no value')
         if channel is None:
             raise ValueError('channel variable has no value')
         if bitrate is None:
             raise ValueError('bitrate variable has no value')
+        print("succesful")
 
     def scan_bus(self):
         """This function scans for nodes on the network and returns all
