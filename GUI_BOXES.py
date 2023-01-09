@@ -43,7 +43,7 @@ def WriteWidget(w2, node_list):
     UploadButton=QtWidgets.QPushButton("Upload")
     UploadButton.resize(20, 10)
     
-    UpdateButton=QtWidgets.QPushButton("Upload")
+    UpdateButton=QtWidgets.QPushButton("Update")
     UpdateButton.resize(10, 10)
 
     w5.addWidget(QtWidgets.QLabel("Node:"), row = 0, col= 0)
@@ -82,7 +82,7 @@ def NodeTree(node_list):
     
     w6.setHeaderHidden(True)
     ObjectlistNode1= ['Example object list!',6060, 6061, 6062]
-    
+
     def populatelist():
         pg.TreeWidget.clear(w6)
         for i in range(len(node_list)):
