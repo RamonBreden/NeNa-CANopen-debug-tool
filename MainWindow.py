@@ -49,7 +49,6 @@ win.resize(1000,750)
 win.setWindowTitle('NeNa CANopen debugger')
 
 menu= QMenuBar()
-
 ## Create docks, place them into the window one at a time.
 ## Note that size arguments are only a suggestion; docks will still have to
 ## fill the entire dock area and obey the limits of their internal widgets.
@@ -57,8 +56,8 @@ d1 = Dock("Plot parameters", size=(700, ), hideTitle=True)     ## give this dock
 d2 = Dock("Console", size=(300,300), closable=True, hideTitle=True)
 d3 = Dock("CAN BUS Connection", size=(1,200), hideTitle=False)
 d4 = Dock("Plotgenerator", size=(1,200), hideTitle=True)
-d5 = Dock("Write to Objects", size=(1,200), hideTitle=False)
-d6 = Dock("Object List", size=(1,200), hideTitle=False)
+d5 = Dock("Write to Objects", size=(1,200), hideTitle=True)
+d6 = Dock("Object List", size=(1,200), hideTitle=True)
 #d7 = Dock("plot", size=(1,1),closable=True, hideTitle=False)
 
 area.addDock(d1, 'right')     
@@ -82,16 +81,18 @@ w2 = ConsoleWidget()
 d2.addWidget(w2)
 
 #generate the w3 widget and put it into the d3 box
-d3.addWidget(ConnectWidget(w2)[0])
+Connectvariabeles= ConnectWidget(w2)
+w3 =Connectvariabeles[0]
+node_list = Connectvariabeles[1]
+#connected = Connectvariabeles[1]
 
+d3.addWidget(w3)
 
-if ConnectWidget(w2)[2] == True:
-    node_list = ConnectWidget(w2)[1]
-    #make the window to write date to the NeNa
-    d5.addWidget(WriteWidget(w2, node_list))
+w5= WriteWidget(w2, node_list)
+w6=NodeTree(node_list)        
 
-    #make the list of nodes on the canbus, with dropdown list of the objects
-    d6.addWidget(NodeTree(node_list))
+d5.addWidget(w5)
+d6.addWidget(w6)        
 #----------------------------------------------------------------------------------------------------
 # create the ParameterTree
 
@@ -112,6 +113,7 @@ pt = pg.parametertree.ParameterTree(showHeader=False)
 pt.setParameters(params)
 
 d1.addWidget(pt)
+
 
 #Scroll Plot ------------------------------------------------------------------------------------------------
 w4 = pg.GraphicsLayoutWidget(show=True)
@@ -177,7 +179,6 @@ d4.addWidget(w4)
 
 
 
-
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # the function that updates the parameter tree when it is i called
 def updateparametertree():
@@ -216,3 +217,4 @@ win.show()
 #This function keeps the GUI running 
 if __name__ == '__main__':
     pg.exec()
+
