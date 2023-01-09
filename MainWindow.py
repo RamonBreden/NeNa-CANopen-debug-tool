@@ -98,13 +98,12 @@ d5.addWidget(w5)
 
 
 children = [
-    dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
-    
     dict(name='Lines', type='int', limits= [1, 5] ),
-    
     dict(name='Plot length', type='int', limits= [1, 500], value= 15 ),
     dict(name='Plot objects', type='bool', value= False ),
+
     dict(name='Line 1'),
+    dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 1', type='int', limits= [1, 5] ),
     dict(name='Object ID line 1', type='int', limits= [1, 5] ),
