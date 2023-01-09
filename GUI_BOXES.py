@@ -63,7 +63,7 @@ def WriteWidget(w2, node_list):
 
 def NodeTree():
     w6 = pg.TreeWidget()
-    node_list = [40, 41]
+    node_list = [40, 41, 42]
     ObjectlistNode1= [6060, 6061, 6062]
 
     for i in range(len(node_list)):
@@ -84,8 +84,13 @@ def ConnectWidget(w2):
     #call layoutmanager and make the window w3
     w3 = pg.LayoutWidget()
     #Make buttons and inputsfields widgets
-    bustype=QLineEdit()
-    channel=QLineEdit()
+    bustype=QComboBox()
+    bustype_list = ['pcan', 'none'] #list of bustypes possible
+    bustype.addItems(bustype_list)
+    channel=QComboBox()
+    channel_list = ['PCAN_USBBUS1','none'] #list of bustypes possible
+    channel.addItems(channel_list)
+
     bitrate=QComboBox()
     bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
     bitrate.addItems(map(str, bitrate_list))
@@ -115,8 +120,17 @@ def ConnectWidget(w2):
         #run the Connect script
         connect = CAN_COM(bustype.text(), channel.text(), int(bitrate.currentText())) # Werkt wel met currentText!!
         node_list = connect.scan_bus()
+        #CAN_COM.__init__(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
+        #CAN_COM(bustype.text(), channel.text(), bitrate_list(bitrate.currentIndex()))
+
+        #DEMO
+        CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!
+        node_list = CAN_COM.scan_bus(1)
+        
+        #write the node list to the consel
         string_of_nums = ','.join(str(num) for num in node_list)
         w2.write("Found nodes: " + string_of_nums + "\n")
+
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
     Connect_button.clicked.connect(lambda: connect(bitrate))

@@ -110,7 +110,6 @@ params = pg.parametertree.Parameter.create(name='Parameters', type='group', chil
 pt = pg.parametertree.ParameterTree(showHeader=False)
 pt.setParameters(params)
 
-
 d1.addWidget(pt)
 
 
