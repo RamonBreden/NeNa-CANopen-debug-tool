@@ -56,7 +56,7 @@ def WriteWidget(w2, node_list):
         connection.upload(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()), int(variable.text()))
         w2.write('Uploading...\n' , scrollToBottom='auto')
         receive = connection.download(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()))
-        w2.write('Succesfully uploaded ' + str(receive) + ' to node ' + Node.currentText() + ' to object ' + Object.text() + ' at sub index ' + Sub_index.text() , '\n' , scrollToBottom='auto')
+        w2.write('Succesfully uploaded ' + str(receive) + ' to node ' + Node.currentText() + ' to object ' + Object.text() + ' at sub index ' + Sub_index.text() + '\n' , scrollToBottom='auto')
     UploadButton.clicked.connect(upload)
 
     return w5 
