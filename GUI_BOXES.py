@@ -53,8 +53,10 @@ def WriteWidget(w2, node_list):
 
     def upload():
         #send the folling things to the Connecting thing
-        print(Node.currentText(), Object.text(), variable.text(), Sub_index.text())
-        w2.write('uploaded\n' , scrollToBottom='auto')
+        connection.upload(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()), int(variable.text()))
+        w2.write('Uploading...\n' , scrollToBottom='auto')
+        receive = connection.download(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()))
+        w2.write('Succesfully uploaded ' + str(receive) + ' to node ' + Node.currentText() + ' to object ' + Object.text() + ' at sub index ' + Sub_index.text() , '\n' , scrollToBottom='auto')
     UploadButton.clicked.connect(upload)
 
     return w5 
@@ -112,10 +114,10 @@ def ConnectWidget(w2):
     w3.addWidget(Connect_button, row=3, col=1) 
     w3.addWidget(Light, row= 3, col=0)
 
-    node_list = ['not connected']
-
-    #the action of the connect button
-    def connect():
+    #define the action of the button
+    def connect(bitrate):
+        global connection
+        #bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
         w2.write("connecting....\n", scrollToBottom='auto')
 
         #connection = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!     
