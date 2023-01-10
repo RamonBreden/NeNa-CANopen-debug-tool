@@ -108,7 +108,7 @@ children = [
     dict(name='Node ID line 1', type='int', limits= [1, 5] ),
     dict(name='Object ID line 1', type='int', limits= [1, 5] ),
     dict(name='Sub index line 1', type='int', limits= [1, 5] ), 
-    dict(name='Line 2', color ="white"  ),
+    dict(name='Line 2' ),
     dict(name='Color line 2', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 2', type='int', limits= [1, 5] ),
     dict(name='Object ID line 2', type='int', limits= [1, 5] ),
