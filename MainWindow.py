@@ -103,21 +103,21 @@ children = [
     dict(name='Plot objects', type='bool', value= False ),
 
     dict(name='Line 1'),
-    dict(name='linewidth', type='float', limits=[0.1, 50], value=1, step=0.1),
+    dict(name='Width line 1', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 1', type='int', limits= [1, 5] ),
-    dict(name='Object ID line 1', type='int', limits= [1, 5] ),
-    dict(name='Sub index line 1', type='int', limits= [1, 5] ), 
-    dict(name='Line 2' ),
+    dict(name='Node ID line 1', type='int', limits= [1, 100000] ),
+    dict(name='Object ID line 1', type='int', limits= [1, 100000] ),
+    dict(name='Sub index line 1', type='int', limits= [1, 20] ), 
+    dict(name='Line 2'),
     dict(name='Color line 2', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 2', type='int', limits= [1, 5] ),
-    dict(name='Object ID line 2', type='int', limits= [1, 5] ),
-    dict(name='Sub index line 2', type='int', limits= [1, 5] ), 
+    dict(name='Node ID line 2', type='int', limits= [1, 100000] ),
+    dict(name='Object ID line 2', type='int', limits= [1, 100000] ),
+    dict(name='Sub index line 2', type='int', limits= [1, 20] ), 
     dict(name='Line 3'),
     dict(name='Color line 3', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 3', type='int', limits= [1, 5] ),
-    dict(name='Object ID line 3', type='int', limits= [1, 5] ),
-    dict(name='Sub index line 3', type='int', limits= [1, 5] ), 
+    dict(name='Node ID line 3', type='int', limits= [1, 100000] ),
+    dict(name='Object ID line 3', type='int', limits= [1, 100000] ),
+    dict(name='Sub index line 3', type='int', limits= [1, 20] ), 
 
 ]
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
@@ -150,10 +150,10 @@ fps = None
 def update_plot():
     global Xm2, node, ptr1, fps, lastTime
 
-    line_color       = params.child('Color').value()
-    line_width       = params.child('linewidth').value()
+    line_color       = params.child('Color line 1').value()
+    line_width       = params.child('Width line 1').value()
     amount_of_lines =  params.child('Lines').value()
-
+    
     node= 41 # moet komen van can bus connection
 
 
@@ -204,10 +204,11 @@ d4.addWidget(w4)
 # the function that updates the parameter tree when it is i called
 def updateparametertree():
     w2.write("Parameter tree changing\n", scrollToBottom='auto')
-    plotobject = params.child('Plot objects').value()
-
-    if plotobject == True:
-        timer.start(15)
+    plot_object = params.child('Plot objects').value()
+    plot_length= params.child('Plot length').value()
+    
+    if plot_object == True:
+        timer.start(plot_length)
     else:
         timer.stop()
 
