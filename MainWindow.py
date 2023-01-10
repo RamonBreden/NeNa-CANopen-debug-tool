@@ -11,16 +11,15 @@ would consist of dockable components.
 """
 
 from GUI_BOXES import *
-
-import sys
 from CAN_COM import *
-#from CAN_COM_DEMO import *
+
+from time import perf_counter
+import sys
 import numpy as np
 import qdarktheme
 import numpy as np
-import pyqtgraph as pg
 
-from time import perf_counter
+import pyqtgraph as pg
 from pyqtgraph.console import ConsoleWidget
 from pyqtgraph.dockarea.Dock import Dock
 from pyqtgraph.dockarea.DockArea import DockArea
@@ -37,7 +36,9 @@ from PyQt6.QtWidgets import (
     QToolBar,
     QMessageBox,
     QApplication,
-    QSpinBox
+    QSpinBox,
+    QErrorMessage
+    
 )
 
 app = QApplication(sys.argv)
@@ -49,6 +50,7 @@ win.resize(1000,750)
 win.setWindowTitle('NeNa CANopen debugger')
 
 menu= QMenuBar()
+errordialog = QtWidgets.QErrorMessage()
 ## Create docks, place them into the window one at a time.
 ## Note that size arguments are only a suggestion; docks will still have to
 ## fill the entire dock area and obey the limits of their internal widgets.
@@ -89,10 +91,10 @@ connected = Connectvariabeles[2]
 d3.addWidget(w3)
 
 w5= WriteWidget(w2, node_list)
-#w6=NodeTree(node_list)        
+w6=NodeTree(node_list)        
 
 d5.addWidget(w5)
-#d6.addWidget(w6)        
+d6.addWidget(w6)        
 #----------------------------------------------------------------------------------------------------
 # create the ParameterTree
 
@@ -106,17 +108,17 @@ children = [
     dict(name='Width line 1', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 1', type='int', limits= [1, 100000] ),
-    dict(name='Object ID line 1', type='int', limits= [1, 100000] ),
+    dict(name='Object ID line 1', type='str', limits= [1, 100000] ),
     dict(name='Sub index line 1', type='int', limits= [1, 20] ), 
     dict(name='Line 2'),
     dict(name='Color line 2', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 2', type='int', limits= [1, 100000] ),
-    dict(name='Object ID line 2', type='int', limits= [1, 100000] ),
+    dict(name='Object ID line 2', type='str', limits= [1, 100000] ),
     dict(name='Sub index line 2', type='int', limits= [1, 20] ), 
     dict(name='Line 3'),
     dict(name='Color line 3', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 3', type='int', limits= [1, 100000] ),
-    dict(name='Object ID line 3', type='int', limits= [1, 100000] ),
+    dict(name='Object ID line 3', type='str', limits= [1, 100000] ),
     dict(name='Sub index line 3', type='int', limits= [1, 20] ), 
 
 ]
@@ -150,19 +152,35 @@ fps = None
 def update_plot():
     global Xm2, node, ptr1, fps, lastTime
 
+    
     line_color       = params.child('Color line 1').value()
     line_width       = params.child('Width line 1').value()
     amount_of_lines =  params.child('Lines').value()
     
+    #ONCOMMENTEDEN ALS JE DE PARAMETERS VAN DE TREE WILT HEBBEN
+    #node_id1= params.child('Node ID line 1').value()
+    #obj_id1= params.child('Object ID line 1').value()
+    #subindx1= params.child('Sub index line 1').value()
+
+    
     node= 41 # moet komen van can bus connection
 
-
+    #TRYING TO MAKE THE network connfiguration happen only the first pass through
     startup= 0
     if startup == 0:
+        
+        #get updated variables form the connect window/widget
+        #WERKT NOG NIET
+
+        Connectvariabeles= ConnectWidget(w2)
+        CAN_ID = Connectvariabeles[3]
+        print(CAN_ID)
+
         network = canopen.Network()
         network.connect(bustype='pcan', channel='PCAN_USBBUS1', bitrate=250000)
         rnode= network.add_node(node, "PD4E_test.eds", False)
         startup=1
+
 
 
 
@@ -192,18 +210,16 @@ def update_plot():
     p2.setTitle("%0.2f fps" % fps)
 
 timer = pg.QtCore.QTimer()
-timer.timeout.connect(update_plot)
-#timer.timeout.connect(update_plot)
-#timer.start(15)  
-
+timer.timeout.connect(update_plot)  
 d4.addWidget(w4)
-
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # the function that updates the parameter tree when it is i called
 def updateparametertree():
     w2.write("Parameter tree changing\n", scrollToBottom='auto')
+
+    # start plotting the graph when the tickbox is ticked
     plot_object = params.child('Plot objects').value()
     plot_length= params.child('Plot length').value()
     
@@ -211,10 +227,10 @@ def updateparametertree():
         timer.start(plot_length)
     else:
         timer.stop()
-
-
 params.sigTreeStateChanged.connect(updateparametertree) # looks at the parameter tree and when it changes it will run the update function.
 
+
+#--------------------------------------------------------------------------------------------------------------------------------------------
 #shows the window that is made 
 win.show()
 #This function keeps the GUI running 

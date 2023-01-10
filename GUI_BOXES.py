@@ -71,6 +71,7 @@ def WriteWidget(w2, node_list):
         w2.write('Uploading...\n' , scrollToBottom='auto')
         receive = connectpcan.download(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()))
         w2.write('Succesfully uploaded ' + str(receive) + ' to node ' + Node.currentText() + ' to object ' + Object.text() + ' at sub index ' + Sub_index.text() + '\n' , scrollToBottom='auto')
+
     UploadButton.clicked.connect(upload)
 
     return w5 
@@ -81,9 +82,9 @@ def NodeTree(node_list):
     
     w6.setHeaderHidden(True)
     ObjectlistNode1= ['Example object list!',6060, 6061, 6062]
-
+    node_list= [40, 41]
     def populatelist():
-        pg.TreeWidget.clear(w6)
+        #pg.TreeWidget.clear(w6)
         for i in range(len(node_list)):
             
             Name = "Node " + str(node_list[i])
@@ -93,10 +94,7 @@ def NodeTree(node_list):
             for j in range(len(ObjectlistNode1)):               #for every object in the list
                 object= QtWidgets.QTreeWidgetItem([str(ObjectlistNode1[j])]) # add a Child to the Node with the name of the Node
                 item.addChild(object)
-    
-
-
-    
+       
     populatelist()
     #w6.sigItemCheckStateChanged.connect(populatelist)
     return(w6)
@@ -140,39 +138,50 @@ def ConnectWidget(w2):
     
     w3.addWidget(Connect_button, row=3, col=1) 
     w3.addWidget(Light, row= 3, col=0)
-    
- 
+
     #define the action of the button
     connected = 0
     def connect():
-        global connectpcan, node_listnew, connected
+        global node_listnew, connected, connectpcan 
+        
         w2.write("connecting....\n", scrollToBottom='auto')
 
-        connectpcan = CAN_COM(bustype.currentText(), channel.currentText(), int(bitrate.currentText())) # Werkt wel met currentText!!     
+
+        bus=                bustype.currentText()
+        channelname =       channel.currentText()
+        bit =               int(bitrate.currentText())
+
+        connectpcan = CAN_COM(bus, channelname, bit) # Werkt wel met currentText!!     
+        
+        #Get all nodes connected to the canbus
         node_listnew = connectpcan.scan_bus()
         #node_list= [50,40]
+
         #write the node list to the consel
         string_of_nums = ','.join(str(num) for num in node_listnew)
-        w2.write("Found nodes: " + string_of_nums + "\n")
-
+        w2.write("Connected \n Found nodes: " + string_of_nums + "\n")   
         #When connected set light to green
         Light.setStyleSheet("background-color : green")
      
-        #Make the widgets with the updated nodelist
         connected = 1
-
+        #Stop connection with the CANBUS 
+        #this is only because we couldnot get the CAN_COM things to work
         connectpcan.disconnect()
-        
+
         return node_listnew, connected, connectpcan
-
-
-
     Connect_button.clicked.connect(connect)
 
-    
+    #use new nodelist when the program is connected
     if connected == 0:
         node_list = ['not connected']
+        
     else:
         node_list=node_listnew
-    
-    return w3, node_list, connected
+
+       
+    bus=                bustype.currentText()
+    channelname =       channel.currentText()
+    bit =               int(bitrate.currentText())
+    CAN_ID = [bus, channelname, bit]
+
+    return w3, node_list, connected, CAN_ID
