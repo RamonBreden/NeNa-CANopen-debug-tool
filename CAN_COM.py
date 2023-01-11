@@ -81,12 +81,12 @@ class CAN_COM():
         # Send bytes to node
         wnode.sdo.download(ob_id, sub_idx, write_byte)
 
-    def rnode(self, node_id):
-        # Connect to node
-        rnode= self.network.add_node(node_id, "PD4E_test.eds", False)
-        return rnode
+    #def rnode(self, node_id):
+    #    # Connect to node
+    #    rnode= self.network.add_node(node_id, "PD4E_test.eds", False)
+    #    return rnode
 
-    def download(self, rnode, ob_id, sub_idx):
+    def download(self, node_id, ob_id, sub_idx):
         """ This function reads a byte array from an object ID 
         and converts it to an integer.
         :param node_id:
@@ -98,7 +98,7 @@ class CAN_COM():
         :param write_val:
             The value that should be written to the object ID (integer).
         """
-
+        rnode= self.network.add_node(node_id, "PD4E_test.eds", False)
         # Read byte array from node
         read_byte = rnode.sdo.upload(ob_id, sub_idx)
         # Convert byte array to integer
