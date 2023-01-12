@@ -102,10 +102,10 @@ w3.addWidget(Light, row= 3, col=0)
 
 #define the action of the button
 node_list = ['Not connected']
-
+CAN_ID= ['not connected',0,0]
 def connect():
     #ISSUE: THere is no way to see if the connection has failed
-    global connectpcan, node_list
+    global connectpcan, node_list, CAN_ID
     CAN_ID= ['not connected']
     Light.setStyleSheet("background-color : red")
     w2.write("connecting....\n", scrollToBottom='auto')
@@ -173,8 +173,6 @@ def UpdateLists():
     Node.addItems(map(str, node_list))
     pg.TreeWidget.clear(w6)
     populatelist()
-    
-
 
 UpdateButton.clicked.connect(UpdateLists)
 
@@ -214,28 +212,31 @@ d6.addWidget(w6)
 
 children = [
     #basic plot parameters
-    dict(name='Lines', type='int', limits= [1, 5] ),
-    dict(name='Plot length', type='int', limits= [1, 500], value= 15 ),
+    dict(name='Plot speed', type='int', limits= [1, 500], value= 15 ),
+    dict(name='Plot width', type='int', limits= [1, 500], value= 100 ),
     dict(name='Plot objects', type='bool', value= False ),
     #Parameters per line
-    dict(name='Line 1'),
+    dict(name='Line 1', type='bool', value= False ),
     dict(name='Line name', type='str'),
     dict(name='Width line 1', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 1', type='int', limits= [1, 100000] ),
-    dict(name='Object ID line 1', type='str', limits= [1, 100000] ),
-    dict(name='Sub index line 1', type='int', limits= [1, 20] ), 
-    dict(name='Line 2'),
+    dict(name='Node ID line 1', type='int', limits= [1, 100000], value= 41 ),
+    dict(name='Object ID line 1', type='str', limits= [1, 100000],value=0x2039 ),
+    dict(name='Sub index line 1', type='int', limits= [1, 20],value= 4 ), 
+
+    dict(name='Line 2', type='bool', value= False ),
+    dict(name='Width line 2', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 2', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 2', type='int', limits= [1, 100000] ),
     dict(name='Object ID line 2', type='str', limits= [1, 100000] ),
-    dict(name='Sub index line 2', type='int', limits= [1, 20] ), 
-    dict(name='Line 3'),
+    dict(name='Sub index line 2', type='int', limits= [1, 20] ),
+
+    dict(name='Line 3', type='bool', value= False ),
+    dict(name='Width line 3', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 3', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
     dict(name='Node ID line 3', type='int', limits= [1, 100000] ),
     dict(name='Object ID line 3', type='str', limits= [1, 100000] ),
     dict(name='Sub index line 3', type='int', limits= [1, 20] ), 
-
 ]
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
 pt = pg.parametertree.ParameterTree(showHeader=False)
@@ -243,61 +244,152 @@ pt.setParameters(params)
 
 d1.addWidget(pt)
 
+#--------------------------------------------------------------------------------------------------------------------------------------------
+# the function that updates the parameter tree when it is i called
+def updateparametertree():
+    global node1, node2, node3, node4
+    w2.write("Parameter tree changing\n", scrollToBottom='auto')
+    
+    # start plotting the graph when the tickbox is ticked
+    plot_object = params.child('Plot objects').value()
+    plot_length= params.child('Plot speed').value()
+    try:
+        if plot_object == True:
+    
+            timer.start(plot_length)
+            #setup Can network
+            network = canopen.Network()
+            network.connect(bustype=CAN_ID[0], channel=CAN_ID[1], bitrate=CAN_ID[2])
+
+            #intilize the nodes on the network
+            node1= network.add_node(node_list[0], "PD4E_test.eds", False)
+            node2= network.add_node(node_list[1], "PD4E_test.eds", False)
+            node3= network.add_node(node_list[2], "PD4E_test.eds", False)
+            node4= network.add_node(node_list[3], "PD4E_test.eds", False)
+
+        else:
+            #network.disconnect()
+            timer.stop()
+    except:
+        w2.write("NOT CONNECTED \n")
+
+params.sigTreeStateChanged.connect(updateparametertree) # looks at the parameter tree and when it changes it will run the update function.
+
 
 #SCROLL PLOT ------------------------------------------------------------------------------------------------
 w4 = pg.GraphicsLayoutWidget(show=True)
-w4.setWindowTitle('pyqtgraph example: Scrolling Plots')
+w4.setWindowTitle('Scrolling Plot')
 p2 = w4.addPlot()
 
-pg.setConfigOptions(antialias=True)
+pg.setConfigOptions(antialias=False)
 windowWidth = 500
 ptr1 = -windowWidth
 lastTime = perf_counter()
 fps = None
 
 
-#curve1 = p2.plot(pen={'color':(0, 156, 129), 'width':3})
+curve1 = p2.plot()
 curve2 = p2.plot()
+curve3 = p2.plot()
 
-#Xm1 = np.linspace(0,0,windowWidth)
+Xm1 = np.linspace(0,0,windowWidth)
 Xm2 = np.linspace(0,0,windowWidth)            
-
-
-
-#lines   = params.child('nb_lines').value()
-
+Xm3 = np.linspace(0,0,windowWidth)            
+Xm4 = np.linspace(0,0,windowWidth)            
 
 def update_plot():
     global Xm2, node, ptr1, fps, lastTime
 
+    line1ON = params.child('Line 1').value()
+    line2ON = params.child('Line 2').value()
+    line3ON = params.child('Line 3').value()
+
+    if line1ON == True:
+        line_color1       = params.child('Color line 1').value()
+        line_width1      = params.child('Width line 1').value()
+        node_id1= params.child('Node ID line 1').value()
+        ob_id1=int( params.child('Object ID line 1').value())
+        sub_idx1=int(params.child('Sub index line 1').value())
+
+        Xm1[:-1] = Xm1[1:]
+
+        if node_id1 == node_list[0]:
+            # Read byte array from node
+            read_byte = node1.sdo.upload(ob_id1, sub_idx1)
+            # Convert byte array to integer
+            read_int_1 = int.from_bytes(read_byte, "little")
+        elif node_id1 == node_list[1]:
+            read_byte = node2.sdo.upload(ob_id1, sub_idx1)
+            read_int_1 = int.from_bytes(read_byte, "little")
+        else:
+            read_int_1 = 0 
+
+        Xm1[-1] = float(read_int_1)
+
+        curve1.setData(Xm1)
+        curve1.setPos(ptr1, 0)
+        curve1.setPen(color=line_color1, width=line_width1)
     
-    line_color1       = params.child('Color line 1').value()
-    line_width1      = params.child('Width line 1').value()
-    
- 
-    node_id1= params.child('Node ID line 1').value()
-    obj_id1= params.child('Object ID line 1').value()
-    subindx1= params.child('Sub index line 1').value()
 
-    
-    
+   
+    if line2ON == True:
+        
+        line_color2       = params.child('Color line 2').value()
+        line_width2      = params.child('Width line 2').value()
+        node_id2= params.child('Node ID line 2').value()
+        ob_id2=int( params.child('Object ID line 2').value())
+        sub_idx2=int(params.child('Sub index line 2').value())
+
+        Xm2[:-1] = Xm2[1:]
+
+        if node_id2 == node_list[0]:
+            read_byte = node1.sdo.upload(ob_id2, sub_idx2)
+            read_int_2 = int.from_bytes(read_byte, "little")
+        elif node_id2 == node_list[1]:
+            read_byte = node2.sdo.upload(ob_id2, sub_idx2)
+            read_int_2 = int.from_bytes(read_byte, "little")
+        else:
+            read_int_2 = 0 
+
+        Xm2[-1] = float(read_int_2)
+
+        curve2.setData(Xm2)
+        curve2.setPos(ptr1, 0)
+        curve2.setPen(color=line_color2, width=line_width2)
+       
+    if line3ON == True:
+        
+        line_color3       = params.child('Color line 3').value()
+        line_width3      = params.child('Width line 3').value()
+        node_id3= params.child('Node ID line 3').value()
+        ob_id3=int( params.child('Object ID line 3').value())
+        sub_idx3=int(params.child('Sub index line 3').value())
+
+        Xm3[:-1] = Xm3[1:]
+
+        if node_id3 == node_list[0]:
+            read_byte = node1.sdo.upload(ob_id3, sub_idx3)
+            read_int_3 = int.from_bytes(read_byte, "little")
+        elif node_id3 == node_list[1]:
+            read_byte = node2.sdo.upload(ob_id3, sub_idx3)
+            read_int_3 = int.from_bytes(read_byte, "little")
+        else:
+            read_int_3 = 0 
+
+        Xm2[-1] = float(read_int_3)
+
+        curve3.setData(Xm3)
+        curve3.setPos(ptr1, 0)
+        curve3.setPen(color=line_color3, width=line_width3)
 
 
 
-
-    Xm2[:-1] = Xm2[1:]
-
-    read_byte_2 =connectpcan.download(node_id1, obj_id1, subindx1)
-    read_int_2 = int.from_bytes(read_byte_2, "little")
-
-    Xm2[-1] = float(read_int_2)
-    
     ptr1 += 1
 
-    curve2.setData(Xm2)
-    curve2.setPos(ptr1, 0)
-    curve2.setPen(color=line_color1, width=line_width1)
 
+
+   
+    
     now = perf_counter()
     dt = now - lastTime
     lastTime = now
@@ -314,20 +406,6 @@ timer.timeout.connect(update_plot)
 d4.addWidget(w4)
 
 
-#--------------------------------------------------------------------------------------------------------------------------------------------
-# the function that updates the parameter tree when it is i called
-def updateparametertree():
-    w2.write("Parameter tree changing\n", scrollToBottom='auto')
-
-    # start plotting the graph when the tickbox is ticked
-    plot_object = params.child('Plot objects').value()
-    plot_length= params.child('Plot length').value()
-    
-    if plot_object == True:
-        timer.start(plot_length)
-    else:
-        timer.stop()
-params.sigTreeStateChanged.connect(updateparametertree) # looks at the parameter tree and when it changes it will run the update function.
 
 
 

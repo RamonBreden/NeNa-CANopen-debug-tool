@@ -74,6 +74,7 @@ class CAN_COM():
 
         # Connect to node
         wnode = self.network.add_node(node_id, "PD4E_test.eds", False)
+        # use something like this to get the name of the object from base file: print(wnode.object_dictionary[0x6042])
         # Calculate the length of the write value in if writen as byte
         byte_length = write_val.bit_length() // 8 + (write_val.bit_length() % 8 > 0)
         # Convert int to bytes
