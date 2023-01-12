@@ -84,6 +84,7 @@ class CAN_COM():
     def rnode(self, node_id):
         # Connect to node
         rnode= self.network.add_node(node_id, "PD4E_test.eds", False)
+        
         return rnode
 
     def download(self, rnode, ob_id, sub_idx):
@@ -103,6 +104,7 @@ class CAN_COM():
         read_byte = rnode.sdo.upload(ob_id, sub_idx)
         # Convert byte array to integer
         conv_int = int.from_bytes(read_byte, "little")
+
         return conv_int
 
     def disconnect(self):
