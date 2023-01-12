@@ -67,6 +67,7 @@ def WriteWidget(w2, node_list):
 
     def upload():
         #send the folling things to the Connecting thing
+        #node = connectpcan.rnode(int(Node.currentText()))
         connectpcan.upload(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()), int(variable.text()))
         w2.write('Uploading...\n' , scrollToBottom='auto')
         receive = connectpcan.download(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()))
@@ -166,7 +167,7 @@ def ConnectWidget(w2):
         connected = 1
         #Stop connection with the CANBUS 
         #this is only because we couldnot get the CAN_COM things to work
-        connectpcan.disconnect()
+        #connectpcan.disconnect()
 
         return node_listnew, connected, connectpcan
     Connect_button.clicked.connect(connect)
