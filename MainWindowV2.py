@@ -133,7 +133,7 @@ def connect():
 
     #Stop connection with the CANBUS 
     #this is only because we couldnot get the CAN_COM things to work
-    connectpcan.disconnect()
+    #connectpcan.disconnect()
     return node_list, CAN_ID, connectpcan
 Connect_button.clicked.connect(connect)
 
@@ -184,9 +184,9 @@ def upload():
     w2.write('Succesfully uploaded ' + str(receive) + ' to node ' + Node.currentText() + ' to object ' + Object.text() + ' at sub index ' + Sub_index.text() + '\n' , scrollToBottom='auto')
 
 UploadButton.clicked.connect(upload)
-
-
 d5.addWidget(w5)
+
+
 #NODE TREE WIDGET------------------------------------------------------------------------------------------------------------------------
 w6 = pg.TreeWidget()
 w6.setHeaderHidden(True)
@@ -255,7 +255,7 @@ def updateparametertree():
     plot_length= params.child('Plot speed').value()
     try:
         if plot_object == True:
-    
+            connectpcan.disconnect()
             timer.start(plot_length)
             #setup Can network
             network = canopen.Network()
@@ -266,7 +266,7 @@ def updateparametertree():
             node2= network.add_node(node_list[1], "PD4E_test.eds", False)
             node3= network.add_node(node_list[2], "PD4E_test.eds", False)
             node4= network.add_node(node_list[3], "PD4E_test.eds", False)
-
+            
         else:
             #network.disconnect()
             timer.stop()
@@ -382,13 +382,7 @@ def update_plot():
         curve3.setPos(ptr1, 0)
         curve3.setPen(color=line_color3, width=line_width3)
 
-
-
-    ptr1 += 1
-
-
-
-   
+    ptr1 += 1 
     
     now = perf_counter()
     dt = now - lastTime
@@ -404,12 +398,6 @@ def update_plot():
 timer = pg.QtCore.QTimer()
 timer.timeout.connect(update_plot)  
 d4.addWidget(w4)
-
-
-
-
-
-
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 #shows the window that is made 
