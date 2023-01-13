@@ -221,9 +221,9 @@ children = [
     dict(name='Line name', type='str'),
     dict(name='Width line 1', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 1', type='int', limits= [1, 100000], value= 41 ),
-    dict(name='Object ID line 1', type='str', limits= [1, 100000],value=0x2039 ),
-    dict(name='Sub index line 1', type='int', limits= [1, 20],value= 4 ), 
+    dict(name='Node ID line 1', type='int', limits= [1, 100000]),
+    dict(name='Object ID line 1', type='str', limits= [1, 100000]),
+    dict(name='Sub index line 1', type='int', limits= [1, 20]), 
 
     dict(name='Line 2', type='bool', value= False ),
     dict(name='Width line 2', type='float', limits=[0.1, 50], value=1, step=0.1),
@@ -344,6 +344,8 @@ def update_plot():
         curve2.setData(Xm2)
         curve2.setPos(ptr1, 0)
         curve2.setPen(color=line_color2, width=line_width2)
+    else: 
+        curve2.clear() #reset graph
        
     if line3ON == True:
         
@@ -362,6 +364,8 @@ def update_plot():
         curve3.setData(Xm3)
         curve3.setPos(ptr1, 0)
         curve3.setPen(color=line_color3, width=line_width3)
+    else: 
+        curve3.clear() #reset graph
 
     ptr1 += 1 
     
