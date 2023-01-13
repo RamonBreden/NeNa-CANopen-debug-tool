@@ -2,12 +2,10 @@
 
 """
 
-from GUI_BOXES import *
 from CAN_COM import *
 
 from time import perf_counter
 import sys
-import numpy as np
 import qdarktheme
 import numpy as np
 
