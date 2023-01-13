@@ -260,12 +260,15 @@ def updateparametertree():
             #setup Can network
             network = canopen.Network()
             network.connect(bustype=CAN_ID[0], channel=CAN_ID[1], bitrate=CAN_ID[2])
-
+            node = 0
             #intilize the nodes on the network
-            node1= network.add_node(node_list[0], "PD4E_test.eds", False)
-            node2= network.add_node(node_list[1], "PD4E_test.eds", False)
-            node3= network.add_node(node_list[2], "PD4E_test.eds", False)
-            node4= network.add_node(node_list[3], "PD4E_test.eds", False)
+            for i in range(node_list):
+                node[i]=  network.add_node(node_list[i], "PD4E_test.eds", False)
+        
+            #node1= network.add_node(node_list[0], "PD4E_test.eds", False)
+            #node2= network.add_node(node_list[1], "PD4E_test.eds", False)
+            #node3= network.add_node(node_list[2], "PD4E_test.eds", False)
+            #node4= network.add_node(node_list[3], "PD4E_test.eds", False)
             
         else:
             #network.disconnect()
