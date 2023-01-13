@@ -221,7 +221,7 @@ children = [
     dict(name='Line name', type='str'),
     dict(name='Width line 1', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 1', type='int', limits= [1, 100000]),
+    dict(name='Node ID line 1', type='int', limits= [, 100000]),
     dict(name='Object ID line 1', type='str', limits= [1, 100000]),
     dict(name='Sub index line 1', type='int', limits= [1, 20]), 
 
@@ -250,6 +250,8 @@ d1.addWidget(pt)
 def updateparametertree():
     #global node1, node2, node3, node4
     w2.write("Parameter tree changing\n", scrollToBottom='auto')
+
+
     
     # start plotting the graph when the tickbox is ticked
     plot_object = params.child('Plot objects').value()
@@ -300,6 +302,7 @@ Xm4 = np.linspace(0,0,windowWidth)
 
 def update_plot():
     global Xm2, ptr1, fps, lastTime
+
 
     line1ON = params.child('Line 1').value()
     line2ON = params.child('Line 2').value()
