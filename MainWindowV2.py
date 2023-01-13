@@ -329,6 +329,9 @@ def update_plot():
         curve1.setData(Xm1)
         curve1.setPos(ptr1, 0)
         curve1.setPen(color=line_color1, width=line_width1)
+    else: 
+            curve1.clear() #reset graph
+
     
 
    
