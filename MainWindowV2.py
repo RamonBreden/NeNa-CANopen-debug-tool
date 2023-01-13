@@ -81,6 +81,7 @@ bitrate=QComboBox()
 bitrate_list = [1000000, 800000, 500000, 250000, 125000, 50000, 20000, 10000]
 bitrate.addItems(map(str, bitrate_list))
 
+
 #Make button
 Connect_button=QtWidgets.QPushButton("Connect")
 #Make the light to communicate the state
