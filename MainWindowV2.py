@@ -105,7 +105,7 @@ node_list = ['Not connected']
 CAN_ID= ['not connected',0,0]
 def connect():
     #ISSUE: THere is no way to see if the connection has failed
-    global connectpcan, node_list, CAN_ID
+    global connectpcan, node_list, CAN_ID, node_added_list
     CAN_ID= ['not connected']
     Light.setStyleSheet("background-color : red")
     w2.write("connecting....\n", scrollToBottom='auto')
@@ -118,7 +118,8 @@ def connect():
     connectpcan = CAN_COM(bus, channelname, bit) # Werkt wel met currentText!!     
     
     #Get all nodes connected to the canbus
-    node_list = connectpcan.scan_bus()
+    node_list, node_added_list = connectpcan.scan_bus()
+
 
     #write the node list to the consel
     string_of_nums = ','.join(str(num) for num in node_list)
@@ -134,7 +135,7 @@ def connect():
     #Stop connection with the CANBUS 
     #this is only because we couldnot get the CAN_COM things to work
     #connectpcan.disconnect()
-    return node_list, CAN_ID, connectpcan
+    return node_list, CAN_ID, connectpcan, node_added_list
 Connect_button.clicked.connect(connect)
 
 d3.addWidget(w3)
@@ -178,9 +179,9 @@ UpdateButton.clicked.connect(UpdateLists)
 
 def upload():
     #send the folling things to the Connecting thing
-    connectpcan.upload(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()), int(variable.text()))
+    connectpcan.upload(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()), int(variable.text()), node_added_list)
     w2.write('Uploading...\n' , scrollToBottom='auto')
-    receive = connectpcan.download(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()))
+    receive = connectpcan.download(int(Node.currentText()), int(Object.text(), 16), int(Sub_index.text()), node_added_list)
     w2.write('Succesfully uploaded ' + str(receive) + ' to node ' + Node.currentText() + ' to object ' + Object.text() + ' at sub index ' + Sub_index.text() + '\n' , scrollToBottom='auto')
 
 UploadButton.clicked.connect(upload)
@@ -247,7 +248,7 @@ d1.addWidget(pt)
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # the function that updates the parameter tree when it is i called
 def updateparametertree():
-    global node1, node2, node3, node4
+    #global node1, node2, node3, node4
     w2.write("Parameter tree changing\n", scrollToBottom='auto')
     
     # start plotting the graph when the tickbox is ticked
@@ -255,20 +256,17 @@ def updateparametertree():
     plot_length= params.child('Plot speed').value()
     try:
         if plot_object == True:
-            connectpcan.disconnect()
+            #connectpcan.disconnect()
             timer.start(plot_length)
             #setup Can network
-            network = canopen.Network()
-            network.connect(bustype=CAN_ID[0], channel=CAN_ID[1], bitrate=CAN_ID[2])
-            node = 0
-            #intilize the nodes on the network
-            for i in range(node_list):
-                node[i]=  network.add_node(node_list[i], "PD4E_test.eds", False)
+            #network = canopen.Network()
+            #network.connect(bustype=CAN_ID[0], channel=CAN_ID[1], bitrate=CAN_ID[2])
         
-            #node1= network.add_node(node_list[0], "PD4E_test.eds", False)
-            #node2= network.add_node(node_list[1], "PD4E_test.eds", False)
-            #node3= network.add_node(node_list[2], "PD4E_test.eds", False)
-            #node4= network.add_node(node_list[3], "PD4E_test.eds", False)
+            #node1= connectpcan.add_node(node_list[0], "PD4E_test.eds", False)
+            #node2= connectpcan.add_node(node_list[1], "PD4E_test.eds", False)
+            #node3= connectpcan.add_node(node_list[2], "PD4E_test.eds", False)
+            #node4= connectpcan.add_node(node_list[3], "PD4E_test.eds", False)
+
             
         else:
             #network.disconnect()
@@ -301,7 +299,7 @@ Xm3 = np.linspace(0,0,windowWidth)
 Xm4 = np.linspace(0,0,windowWidth)            
 
 def update_plot():
-    global Xm2, node, ptr1, fps, lastTime
+    global Xm2, ptr1, fps, lastTime
 
     line1ON = params.child('Line 1').value()
     line2ON = params.child('Line 2').value()
@@ -311,21 +309,12 @@ def update_plot():
         line_color1       = params.child('Color line 1').value()
         line_width1      = params.child('Width line 1').value()
         node_id1= params.child('Node ID line 1').value()
-        ob_id1=int( params.child('Object ID line 1').value())
+        ob_id1=int( params.child('Object ID line 1').value(), 16)
         sub_idx1=int(params.child('Sub index line 1').value())
 
         Xm1[:-1] = Xm1[1:]
 
-        if node_id1 == node_list[0]:
-            # Read byte array from node
-            read_byte = node1.sdo.upload(ob_id1, sub_idx1)
-            # Convert byte array to integer
-            read_int_1 = int.from_bytes(read_byte, "little")
-        elif node_id1 == node_list[1]:
-            read_byte = node2.sdo.upload(ob_id1, sub_idx1)
-            read_int_1 = int.from_bytes(read_byte, "little")
-        else:
-            read_int_1 = 0 
+        read_int_1 = connectpcan.download(node_id1, ob_id1, sub_idx1, node_added_list)
 
         Xm1[-1] = float(read_int_1)
 
@@ -343,19 +332,12 @@ def update_plot():
         line_color2       = params.child('Color line 2').value()
         line_width2      = params.child('Width line 2').value()
         node_id2= params.child('Node ID line 2').value()
-        ob_id2=int( params.child('Object ID line 2').value())
+        ob_id2=int( params.child('Object ID line 2').value(), 16)
         sub_idx2=int(params.child('Sub index line 2').value())
 
         Xm2[:-1] = Xm2[1:]
 
-        if node_id2 == node_list[0]:
-            read_byte = node1.sdo.upload(ob_id2, sub_idx2)
-            read_int_2 = int.from_bytes(read_byte, "little")
-        elif node_id2 == node_list[1]:
-            read_byte = node2.sdo.upload(ob_id2, sub_idx2)
-            read_int_2 = int.from_bytes(read_byte, "little")
-        else:
-            read_int_2 = 0 
+        read_int_2 = connectpcan.download(node_id2, ob_id2, sub_idx2, node_added_list)
 
         Xm2[-1] = float(read_int_2)
 
@@ -368,21 +350,14 @@ def update_plot():
         line_color3       = params.child('Color line 3').value()
         line_width3      = params.child('Width line 3').value()
         node_id3= params.child('Node ID line 3').value()
-        ob_id3=int( params.child('Object ID line 3').value())
+        ob_id3=int( params.child('Object ID line 3').value(), 16)
         sub_idx3=int(params.child('Sub index line 3').value())
 
         Xm3[:-1] = Xm3[1:]
 
-        if node_id3 == node_list[0]:
-            read_byte = node1.sdo.upload(ob_id3, sub_idx3)
-            read_int_3 = int.from_bytes(read_byte, "little")
-        elif node_id3 == node_list[1]:
-            read_byte = node2.sdo.upload(ob_id3, sub_idx3)
-            read_int_3 = int.from_bytes(read_byte, "little")
-        else:
-            read_int_3 = 0 
+        read_int_3 = connectpcan.download(node_id3, ob_id3, sub_idx3, node_added_list)
 
-        Xm2[-1] = float(read_int_3)
+        Xm3[-1] = float(read_int_3)
 
         curve3.setData(Xm3)
         curve3.setPos(ptr1, 0)

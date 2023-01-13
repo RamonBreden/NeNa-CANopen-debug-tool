@@ -41,7 +41,6 @@ class CAN_COM():
         :return: 
             A list with connected nodes
         """
-
         # This will attempt to read an SDO from nodes 1 - 127
         self.network.scanner.search()
         # We may need to wait a short while here to allow all nodes to respond
@@ -49,10 +48,12 @@ class CAN_COM():
 
         # Add all nodes on the bus to this list
         node_list = []
+        node_added_list = []
         for node_id in self.network.scanner.nodes:
+            node_added_list.append(self.network.add_node(node_id, "PD4E_test.eds", False))
             node_list.append(node_id)
 
-        return node_list
+        return node_list, node_added_list
 
     def end_program(self):
         """This function terminates the established connection.
@@ -60,7 +61,7 @@ class CAN_COM():
         """
         self.network.disconnect()
 
-    def upload(self, node_id, ob_id, sub_idx, write_val):
+    def upload(self, node_id, ob_id, sub_idx, write_val, node_added_list):
         """ This function writes an integer value to an object ID
         :param node_id:
             The node identifier (40 = right motor, 41 = left motor).
@@ -72,8 +73,13 @@ class CAN_COM():
             The value that should be written to the object ID (integer).
         """
 
+        if node_id == 40:
+            i = 0
+        elif node_id == 41:
+            i = 1
+
         # Connect to node
-        wnode = self.network.add_node(node_id, "PD4E_test.eds", False)
+        wnode = node_added_list[i]
         # use something like this to get the name of the object from base file: print(wnode.object_dictionary[0x6042])
         # Calculate the length of the write value in if writen as byte
         byte_length = write_val.bit_length() // 8 + (write_val.bit_length() % 8 > 0)
@@ -88,7 +94,7 @@ class CAN_COM():
         
     #    return rnode
 
-    def download(self, node_id, ob_id, sub_idx):
+    def download(self, node_id, ob_id, sub_idx, node_added_list):
         """ This function reads a byte array from an object ID 
         and converts it to an integer.
         :param node_id:
@@ -100,7 +106,13 @@ class CAN_COM():
         :param write_val:
             The value that should be written to the object ID (integer).
         """
-        rnode= self.network.add_node(node_id, "PD4E_test.eds", False)
+
+        if node_id == 40:
+            i = 0
+        elif node_id == 41:
+            i = 1
+
+        rnode= node_added_list[i]
         # Read byte array from node
         read_byte = rnode.sdo.upload(ob_id, sub_idx)
         # Convert byte array to integer
