@@ -220,23 +220,23 @@ children = [
     dict(name='Line name', type='str'),
     dict(name='Width line 1', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 1', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 1', type='int', limits= [1, 100000]),
+    dict(name='Node ID line 1', type='int', limits= [0, 100000]),
     dict(name='Object ID line 1', type='str', limits= [1, 100000]),
-    dict(name='Sub index line 1', type='int', limits= [1, 20]), 
+    dict(name='Sub index line 1', type='int', limits= [0, 20]), 
 
     dict(name='Line 2', type='bool', value= False ),
     dict(name='Width line 2', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 2', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 2', type='int', limits= [1, 100000] ),
+    dict(name='Node ID line 2', type='int', limits= [0, 100000] ),
     dict(name='Object ID line 2', type='str', limits= [1, 100000] ),
-    dict(name='Sub index line 2', type='int', limits= [1, 20] ),
+    dict(name='Sub index line 2', type='int', limits= [0, 20] ),
 
     dict(name='Line 3', type='bool', value= False ),
     dict(name='Width line 3', type='float', limits=[0.1, 50], value=1, step=0.1),
     dict(name='Color line 3', type='list', limits= ['white', 'red', 'green', 'magenta', 'blue' ],value='white' ),
-    dict(name='Node ID line 3', type='int', limits= [1, 100000] ),
+    dict(name='Node ID line 3', type='int', limits= [0, 100000] ),
     dict(name='Object ID line 3', type='str', limits= [1, 100000] ),
-    dict(name='Sub index line 3', type='int', limits= [1, 20] ), 
+    dict(name='Sub index line 3', type='int', limits= [0, 20] ), 
 ]
 params = pg.parametertree.Parameter.create(name='Parameters', type='group', children=children)
 pt = pg.parametertree.ParameterTree(showHeader=False)
