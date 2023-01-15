@@ -49,7 +49,7 @@ errordialog = QtWidgets.QErrorMessage()
 d1 = Dock("Plot parameters", size=(700, ), hideTitle=True)     ## give this dock the minimum possible size
 d2 = Dock("Console", size=(300,300), closable=True, hideTitle=True)
 d3 = Dock("CAN BUS Connection", size=(1,200), hideTitle=False)
-d4 = Dock("Plotgenerator", size=(1,200), hideTitle=True)
+d4 = Dock("Plotgenerator", size=(1,200), hideTitle=False)
 d5 = Dock("Write to Objects", size=(1,200), hideTitle=True)
 d6 = Dock("Object List", size=(1,200), hideTitle=True)
 #d7 = Dock("plot", size=(1,1),closable=True, hideTitle=False)

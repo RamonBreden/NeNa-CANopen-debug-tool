@@ -27,7 +27,8 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QApplication,
     QSpinBox,
-    QErrorMessage
+    QErrorMessage,
+    QSlider
     
 )
 
@@ -103,8 +104,9 @@ w3.addWidget(Light, row= 3, col=0)
 node_list = ['Not connected']
 CAN_ID= ['not connected',0,0]
 def connect():
-    #ISSUE: THere is no way to see if the connection has failed
+    
     global connectpcan, node_list, CAN_ID, node_added_list
+    
     CAN_ID= ['not connected']
     Light.setStyleSheet("background-color : red")
     w2.write("connecting....\n", scrollToBottom='auto')
