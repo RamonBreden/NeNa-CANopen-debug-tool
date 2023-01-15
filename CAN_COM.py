@@ -2,12 +2,11 @@
 # Connecting, reading and writing from and to a CAN bus using the CANopen protocol #
 #----------------------------------------------------------------------------------#
 # Authors: Ramon Breden - Willem van Rossum                                        #
-# Email: name.name@email.com - name.name@email.com                                 #
-# Date: 21 December 2022                                                           #
+# Date: 14 January 2023                                                            #
 # Version: 0.1 (IN DEVELOPMENT)                                                    #
 #----------------------------------------------------------------------------------#
 # Language: Python                                                                 #
-# Required library: CANopen for Python                                             #
+# Required libraries: canopen, time                                                #
 #----------------------------------------------------------------------------------#
 
 # IMPORTS
@@ -39,14 +38,15 @@ class CAN_COM():
         found node ID's in a list.
 
         :return: 
-            A list with connected nodes
+            A list with responded nodes and a list with connected nodes
         """
+
         # This will attempt to read an SDO from nodes 1 - 127
         self.network.scanner.search()
         # We may need to wait a short while here to allow all nodes to respond
         time.sleep(0.05)
 
-        # Add all nodes on the bus to this list
+        # Add all responed nodes to a list and connect to all nodes 
         node_list = []
         node_added_list = []
         for node_id in self.network.scanner.nodes:
@@ -54,12 +54,6 @@ class CAN_COM():
             node_list.append(node_id)
 
         return node_list, node_added_list
-
-    def end_program(self):
-        """This function terminates the established connection.
-        (Disconnecting is not necessary, although it's best practice ;) )
-        """
-        self.network.disconnect()
 
     def upload(self, node_id, ob_id, sub_idx, write_val, node_added_list):
         """ This function writes an integer value to an object ID
@@ -73,26 +67,19 @@ class CAN_COM():
             The value that should be written to the object ID (integer).
         """
 
+        # Node selection to pull from node_added_list
         if node_id == 40:
             i = 0
         elif node_id == 41:
             i = 1
 
-        # Connect to node
         wnode = node_added_list[i]
-        # use something like this to get the name of the object from base file: print(wnode.object_dictionary[0x6042])
         # Calculate the length of the write value in if writen as byte
         byte_length = write_val.bit_length() // 8 + (write_val.bit_length() % 8 > 0)
         # Convert int to bytes
         write_byte = write_val.to_bytes(byte_length, "little")
         # Send bytes to node
         wnode.sdo.download(ob_id, sub_idx, write_byte)
-
-    #def rnode(self, node_id):
-    #    # Connect to node
-    #    rnode= self.network.add_node(node_id, "PD4E_test.eds", False)
-        
-    #    return rnode
 
     def download(self, node_id, ob_id, sub_idx, node_added_list):
         """ This function reads a byte array from an object ID 
@@ -107,6 +94,7 @@ class CAN_COM():
             The value that should be written to the object ID (integer).
         """
 
+        # Node selection to pull from node_added_list
         if node_id == 40:
             i = 0
         elif node_id == 41:
@@ -121,15 +109,6 @@ class CAN_COM():
         return conv_int
 
     def disconnect(self):
+        """ This function disconnects the established connection.
+        """
         self.network.disconnect()
-
-
-# TEST OF FUNCTIONS - REMOVE FOR FINAL APPLICATION
-#p = CAN_COM('pcan', 'PCAN_USBBUS1', 250000)
-#print(p.scan_bus())
-#p.upload(41, 0x320E, 6, 800)
-
-#time.sleep(1)
-
-#print(p.download(41, 0x320E, 6))
-#p.end_program()
