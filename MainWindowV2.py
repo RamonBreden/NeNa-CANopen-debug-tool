@@ -40,7 +40,7 @@ errordialog = QtWidgets.QErrorMessage()
 
 # Create docks and define their pixel sizes
 d1 = Dock("Plot parameters", size=(250, ), hideTitle=True)    
-d2 = Dock("Console", size=(250,300), closable=True, hideTitle=True)
+d2 = Dock("Console", size=(250,300), closable=True, hideTitle=False)
 d3 = Dock("CAN BUS Connection", size=(1,200), hideTitle=True)
 d4 = Dock("Graph", size=(700,200), hideTitle=True)
 d5 = Dock("Write to Objects", size=(1,200), hideTitle=True)
